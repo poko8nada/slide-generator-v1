@@ -32,12 +32,17 @@ Web上でMarkdown形式で記述するだけで、リアルタイムにスライ
 
 ### Markdown処理
 - 入力：@uiw/react-md-editor
-- 変換：remark + rehype
-- スライド生成：reveal.js（HTMLスライド生成、PDF出力対応）
+- 変換：remark + rehype + rehype-sanitize
+- スライド：reveal.js（HTMLスライド＋PDF出力に強い）
 
 ### PDF出力
 - reveal.js の print-pdf 機能（テーマCSSでPDF向けスタイル調整）
 - ブラウザ印刷機能（window.print()）
+
+### スライドレンダリング
+- Markdownは `remark` + `rehype` + `rehype-sanitize` により HTML に変換し、`dangerouslySetInnerHTML` を使って `<section>` ごとのスライドとして挿入する
+- Markdown内の `---` を使って `<section>` を分割し、reveal.js の構造 `<div class="reveal"><div class="slides"><section>...</section></div></div>` にマッピング
+- rehype-sanitize による無害化を行うことで、XSS対策を担保
 
 ---
 
@@ -65,4 +70,6 @@ Web上でMarkdown形式で記述するだけで、リアルタイムにスライ
 - スライド区切り：`---` を基準（簡単で明示的）
 - PDF出力はCtrl+Pによる印刷にも対応
 - ダークモードは最初から反映（Tailwindで管理）
+- MarkdownのHTMLレンダリングには `dangerouslySetInnerHTML` を使用し、`rehype-sanitize` によりセキュリティを確保
+- 将来的に共有機能・公開機能などを追加する場合は、sanitize処理の強化・カスタムルールも検討
 
