@@ -1,4 +1,4 @@
-import { type RefObject, useEffect } from 'react'
+import { type RefObject, useEffect, useRef } from 'react'
 import Reveal from 'reveal.js'
 import RevealMarkdown from 'reveal.js/plugin/markdown/markdown.esm.js'
 
@@ -6,12 +6,21 @@ export function useReveal(
   containerRef: RefObject<HTMLDivElement | null>,
   mdData: string | null,
 ) {
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container || !mdData) return
+  const revealRef = useRef<Reveal.Api | null>(null)
 
-    container.innerHTML = `
-      <div class="reveal">
+  useEffect(() => {
+    if (!containerRef.current) return
+    console.log(containerRef.current.childNodes)
+
+    if (!mdData || mdData.trim() === '') {
+      const slideDiv = containerRef.current.querySelector('.slides')
+      if (slideDiv) {
+        slideDiv.innerHTML = ''
+      }
+      return
+    }
+
+    containerRef.current.innerHTML = `
         <div class="slides">
           <section data-markdown>
             <textarea data-template>
@@ -19,15 +28,9 @@ export function useReveal(
             </textarea>
           </section>
         </div>
-      </div>
     `
 
-    const revealElement = container.querySelector(
-      '.reveal',
-    ) as HTMLElement | null
-    if (!revealElement) return
-
-    const revealInstance = new Reveal(revealElement, {
+    revealRef.current = new Reveal(containerRef.current, {
       plugins: [RevealMarkdown],
       markdown: {
         smartypants: true,
@@ -35,14 +38,20 @@ export function useReveal(
       },
     })
 
-    revealInstance.initialize({
+    revealRef.current.initialize({
       embedded: true,
       keyboard: false,
     })
 
-    // Clean up
     return () => {
-      revealInstance.destroy()
+      try {
+        if (revealRef.current) {
+          revealRef.current.destroy()
+          revealRef.current = null
+        }
+      } catch (error) {
+        console.error('Error during cleanup:', error)
+      }
     }
   }, [containerRef, mdData])
 }
