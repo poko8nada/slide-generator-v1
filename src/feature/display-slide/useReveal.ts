@@ -37,6 +37,7 @@ export function useReveal(
 
     revealInstance.initialize({
       embedded: true,
+      keyboard: false,
     })
 
     // Clean up
