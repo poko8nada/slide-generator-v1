@@ -1,5 +1,10 @@
 {
 	"files.associations": {
 		"wrangler.json": "jsonc"
-	}
+	},
+	"cSpell.words": [
+		"easymde",
+		"simplemde",
+		"Supabase"
+	]
 }
