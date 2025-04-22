@@ -1,70 +1,34 @@
 'use client'
 
 import { useMdData } from '@/providers/md-data-provider'
-import { useEffect, useState } from 'react'
-import rehypeSanitize from 'rehype-sanitize'
-import rehypeStringify from 'rehype-stringify'
-import remarkParse from 'remark-parse'
-import remarkRehype from 'remark-rehype'
-import { unified } from 'unified'
+import { useRef } from 'react'
+import { useReveal } from './useReveal'
+import 'reveal.js/dist/reveal.css'
+import 'reveal.js/dist/theme/white.css'
 
-export default function DisplaySlide() {
+export default function MarkdownSlides() {
   const { mdData } = useMdData()
-  const [htmlContent, setHtmlContent] = useState('')
+  const containerRef = useRef<HTMLDivElement | null>(null)
 
-  // Markdown から HTML への変換を行う非同期関数
-  useEffect(() => {
-    const convertMarkdown = async () => {
-      if (!mdData) {
-        setHtmlContent('')
-        return
-      }
-
-      try {
-        const result = await unified()
-          .use(remarkParse)
-          .use(remarkRehype)
-          .use(rehypeSanitize)
-          .use(rehypeStringify)
-          .process(mdData)
-
-        setHtmlContent(String(result))
-      } catch (error) {
-        console.error('Markdown変換エラー:', error)
-        setHtmlContent('<p>エラーが発生しました</p>')
-      }
-    }
-
-    convertMarkdown()
-  }, [mdData]) // mdDataが変わるたびに実行
+  // Use the custom hook
+  useReveal(containerRef, mdData)
 
   return (
-    <div className='p-4 border rounded'>
-      <h2 className='text-xl font-bold mb-4'>
-        Markdown プレビュー (サニタイズ済み)
-      </h2>
-
-      <div className='mb-4'>
-        <h3 className='font-medium mb-2'>Markdown ソース:</h3>
-        <pre className='bg-gray-100 p-3 rounded overflow-auto max-h-60'>
-          {mdData || 'Markdown コンテンツがありません'}
-        </pre>
+    <div className='flex flex-col h-[calc(100vh-4rem)]'>
+      <div className='p-4 border-b'>
+        <h2 className='font-bold text-xl'>リアルタイム Markdown スライド</h2>
+        <p className='text-sm text-gray-600'>
+          Markdownが変更されると自動的にスライドが更新されます
+        </p>
       </div>
 
-      {htmlContent && (
-        <div className='mt-4'>
-          <h3 className='font-medium mb-2'>HTML 出力 (サニタイズ済み):</h3>
-          <div className='border p-3 rounded'>
-            {/* biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation> */}
-            <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+      <div className='flex-1' ref={containerRef}>
+        {!mdData && (
+          <div className='flex items-center justify-center h-full'>
+            <p className='text-gray-500'>Markdownコンテンツがありません</p>
           </div>
-
-          <h3 className='font-medium mb-2 mt-4'>HTML ソース:</h3>
-          <pre className='bg-gray-100 p-3 rounded overflow-auto max-h-60'>
-            {htmlContent}
-          </pre>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }

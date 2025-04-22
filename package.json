@@ -19,13 +19,8 @@
 		"react-dom": "^19.0.0",
 		"react-simplemde-editor": "^5.2.0",
 		"rehype": "^13.0.2",
-		"rehype-sanitize": "^6.0.0",
-		"rehype-stringify": "^10.0.1",
 		"remark": "^15.0.1",
-		"remark-parse": "^11.0.0",
-		"remark-rehype": "^11.1.2",
-		"reveal.js": "^5.2.1",
-		"unified": "^11.0.5"
+		"reveal.js": "^5.2.1"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
@@ -35,6 +30,7 @@
 		"@types/node": "^20",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
+		"@types/reveal.js": "^5.0.5",
 		"tailwindcss": "^4",
 		"typescript": "^5",
 		"vercel": "^41.6.1",
