@@ -23,11 +23,22 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang='en'>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang='ja'>
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
         {children}
+        <footer className='flex items-center justify-center h-16 border-t'>
+          <p className='text-sm text-gray-500'>
+            Powered by{' '}
+            <a
+              href='https://pokohanada.com'
+              target='_blank'
+              rel='noopener noreferrer'
+              className='text-blue-500 hover:underline'
+            >
+              PokoHanada.com
+            </a>
+          </p>
+        </footer>
       </body>
     </html>
   )
