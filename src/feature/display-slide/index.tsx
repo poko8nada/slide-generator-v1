@@ -22,13 +22,12 @@ export default function MarkdownSlides() {
         </p>
       </div>
 
-      <div className='flex-1 reveal !cursor-auto' ref={containerRef}>
-        {!mdData && (
-          <div className='flex items-center justify-center h-full'>
-            <p className='text-gray-500'>Markdownコンテンツがありません</p>
-          </div>
-        )}
-      </div>
+      <div className='flex-1 reveal !cursor-auto' ref={containerRef} />
+      {!mdData && (
+        <div className='flex items-center justify-center h-full'>
+          <p className='text-gray-500'>Markdownコンテンツがありません</p>
+        </div>
+      )}
     </div>
   )
 }
