@@ -3,7 +3,11 @@ import MarkdownEditor from '@/components/markdown-editor'
 import { useMdData } from '@/providers/md-data-provider'
 import { useMemo } from 'react'
 import type { SimpleMDEReactProps } from 'react-simplemde-editor'
-import { clearAction, imageUploadFunction } from './markdownAction'
+import {
+  clearAction,
+  imageUploadAction,
+  imageUploadFunction,
+} from './markdownAction'
 
 export default function EditMarkdown() {
   const { mdData, setMdData } = useMdData()
@@ -11,6 +15,8 @@ export default function EditMarkdown() {
   const options: SimpleMDEReactProps['options'] = useMemo(
     () => ({
       spellChecker: false,
+      uploadImage: true,
+      imageUploadFunction,
       placeholder: 'Type here...',
       toolbar: [
         'bold',
@@ -20,46 +26,32 @@ export default function EditMarkdown() {
         'unordered-list',
         'ordered-list',
         'link',
-        'image',
         'table',
         'horizontal-rule',
         '|',
-        {
-          name: 'clear',
-          action: (editor: EasyMDE) => {
-            clearAction(editor)
-            setMdData('') // Clear the state
-          },
-          className: 'fa fa-trash',
-          title: 'Clear',
-        },
+        'image',
         {
           name: 'image-upload',
           action: (editor: EasyMDE) => {
-            const input = document.createElement('input')
-            input.type = 'file'
-            input.accept = 'image/*'
-            input.onchange = async event => {
-              const file = (event.target as HTMLInputElement).files?.[0]
-              if (file) {
-                try {
-                  const imageMd = imageUploadFunction(file)
-                  const currentValue = editor.value()
-                  editor.value(`${currentValue}\n${imageMd}`)
-                  setMdData(`${currentValue}\n${imageMd}`)
-                } catch (error) {
-                  console.error('Image upload failed:', error)
-                }
-              }
-            }
-            input.click()
+            imageUploadAction(editor)
           },
           className: 'fa fa-upload',
           title: 'Upload Image',
         },
+        '|',
+        {
+          name: 'clear',
+          action: (editor: EasyMDE) => {
+            if (window.confirm('Are you sure you want to clear the content?')) {
+              clearAction(editor)
+            }
+          },
+          className: 'fa fa-trash',
+          title: 'Clear',
+        },
       ],
     }),
-    [setMdData],
+    [],
   )
 
   return (
