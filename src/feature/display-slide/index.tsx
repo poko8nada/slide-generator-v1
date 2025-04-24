@@ -4,7 +4,8 @@ import { useMdData } from '@/providers/md-data-provider'
 import { useRef } from 'react'
 import { useReveal } from './useReveal'
 import 'reveal.js/dist/reveal.css'
-import 'reveal.js/dist/theme/white.css'
+import 'reveal.js/dist/theme/black.css'
+import { layoutStyleString } from './custom-layout-style'
 
 export default function MarkdownSlides() {
   const { mdData } = useMdData()
@@ -14,7 +15,8 @@ export default function MarkdownSlides() {
   useReveal(containerRef, mdData)
 
   return (
-    <div className='flex flex-col h-[calc(100vh-4rem)]'>
+    <div className='flex flex-col min-h-[500px]'>
+      <style>{layoutStyleString}</style>
       <div className='p-4 border-b'>
         <h2 className='font-bold text-xl'>リアルタイム Markdown スライド</h2>
         <p className='text-sm text-gray-600'>
