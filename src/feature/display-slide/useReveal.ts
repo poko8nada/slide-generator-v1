@@ -8,43 +8,41 @@ export function useReveal(
   mdData: string | null,
 ) {
   const revealRef = useRef<Reveal.Api | null>(null)
+  console.log(revealRef.current)
 
   useEffect(() => {
-    if (!containerRef.current) return
-    // console.log(containerRef.current.childNodes)
+    if (!containerRef.current || !mdData) return
 
-    if (!mdData || mdData.trim() === '') {
-      const slideDiv = containerRef.current.querySelector('.slides')
-      if (slideDiv) {
-        slideDiv.innerHTML = ''
+    // Reveal を破棄
+    if (revealRef.current) {
+      try {
+        revealRef.current.destroy()
+      } catch (error) {
+        console.error('Reveal destroy error:', error)
       }
-      return
+      revealRef.current = null
     }
 
+    // スライド内容の差し替え
     const { frontMatter, body } = parseFrontMatter(mdData)
-    const { common, layout, position, number } = frontMatter
-    console.log('frontMatter', frontMatter)
-
-    // const headerStyle = `
-    // padding: 10px;
-    // `
-    // const headerRegex = /---header---\n([\s\S]*?)\n---header---/g
-    // const parsedMdData = mdData.replace(headerRegex, (_, headerContent) => {
-    //   return `<div class="header" style="${headerStyle}">${headerContent.trim()}</div>`
-    // })
+    const { layout, position, common } = frontMatter
 
     containerRef.current.innerHTML = `
-        <div class="slides">
-          <div class="common ${layout} ${position}"><span class="text">${common}</span><span class="numbered"></span></div>
-          <section data-markdown>
+      <div class="slides">
+        <div class="common ${layout} ${position}">
+          <span class="text">${common}</span><span class="numbered"></span>
+        </div>
+        <section data-markdown>
           <textarea data-template>
           ${body}
           </textarea>
-          </section>
-        </div>
+        </section>
+      </div>
     `
 
-    revealRef.current = new Reveal(containerRef.current, {
+    // Reveal 再初期化
+    const revealInstance = new Reveal(containerRef.current, {
+      transition: 'slide',
       plugins: [RevealMarkdown],
       markdown: {
         smartypants: true,
@@ -52,49 +50,25 @@ export function useReveal(
       },
     })
 
-    // 初期化を完了させる
-    const initPromise = revealRef.current.initialize({
-      embedded: true,
-      keyboard: false,
-    })
-
-    if (initPromise && typeof initPromise.then === 'function') {
-      initPromise.then(() => {
-        console.log('Reveal initialized, now adding event listener')
-
-        if (containerRef.current && revealRef.current) {
-          const sectionsLength =
-            containerRef.current.querySelectorAll('section').length
-          const numbered = containerRef.current.querySelector('.numbered')
-
-          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-          const slideChangedCallback = (event: any) => {
-            if (numbered) {
-              numbered.innerHTML = `${event.indexh + 1}/${sectionsLength}`
-            }
-          }
-          if (numbered && number) {
-            numbered.innerHTML = `1/${sectionsLength}`
-            revealRef.current.on('slidechanged', slideChangedCallback)
-          }
-          return () => {
-            if (revealRef.current) {
-              revealRef.current.off('slidechanged', slideChangedCallback)
-            }
-          }
-        }
+    revealInstance
+      .initialize({
+        embedded: true,
+        keyboard: false,
       })
-    }
+      .then(() => {
+        // 元のスライド位置に戻す
+        revealInstance.slide(2)
+      })
+
+    revealRef.current = revealInstance
 
     return () => {
       try {
-        if (revealRef.current) {
-          revealRef.current.destroy()
-          revealRef.current = null
-        }
+        revealRef.current?.destroy()
       } catch (error) {
-        console.error('Error during cleanup:', error)
+        console.error('Reveal cleanup error:', error)
       }
+      revealRef.current = null
     }
   }, [containerRef, mdData])
 }
