@@ -1,21 +1,19 @@
 'use client'
 
 import { useMdData } from '@/providers/md-data-provider'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import 'reveal.js/dist/reveal.css'
 import 'reveal.js/dist/theme/black.css'
 import DOMPurify from 'dompurify'
 import { marked } from 'marked'
-import Reveal, { type RevealState } from 'reveal.js'
+import Reveal from 'reveal.js'
 import { layoutStyleString } from './custom-layout-style'
 
 export default function MarkdownSlides() {
-  const { mdData } = useMdData()
+  const { mdData, activeSlideIndex } = useMdData()
   const revealRef = useRef<Reveal.Api | null>(null) // Reveal.jsインスタンスを保持
   const containerRef = useRef<HTMLDivElement | null>(null) // スライドコンテナの参照
-  const [currentState, setCurrentState] = useState<RevealState | null>(null) // 現在のスライド状態
   const slidesRef = useRef<HTMLDivElement | null>(null) // .slides要素
-  const stateRef = useRef(null) // 現在のスライド状態
 
   console.log(revealRef.current)
 
@@ -63,7 +61,7 @@ export default function MarkdownSlides() {
         const section = document.createElement('section')
         section.innerHTML = html // 安全なHTMLをセット
         // アクティブスライド以外にhidden属性をセット
-        if (index !== currentState?.indexh) {
+        if (index !== activeSlideIndex) {
           section.setAttribute('hidden', '')
         }
         return section
@@ -87,15 +85,14 @@ export default function MarkdownSlides() {
         try {
           revealRef.current.sync() // スライド構造を更新
           revealRef.current.layout() // スライド表示を再計算
-          if (stateRef.current) {
-            revealRef.current.setState(stateRef.current) // スライド位置を復元
-          }
+          // アクティブスライドを強制設定
+          revealRef.current.slide(activeSlideIndex, 0)
         } catch (error) {
           console.error('Reveal.js update error:', error)
         }
       })
     },
-    [currentState],
+    [activeSlideIndex],
   )
 
   useEffect(() => {
@@ -112,11 +109,8 @@ export default function MarkdownSlides() {
     // Reveal.jsの初期化
     revealRef.current.initialize()
 
-    // スライド変更時に状態を保存
-    revealRef.current.on('slidechanged', () => {
-      if (!revealRef.current) return
-      setCurrentState(revealRef.current.getState())
-    })
+    // 初期スライドを設定
+    updateSlides(getSlides(mdData))
 
     return () => {
       // クリーンアップ
@@ -125,7 +119,7 @@ export default function MarkdownSlides() {
         revealRef.current = null
       }
     }
-  }, [])
+  }, [getSlides, mdData, updateSlides])
 
   useEffect(() => {
     // Markdown更新時にスライドを更新
