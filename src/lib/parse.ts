@@ -1,10 +1,14 @@
 import DOMPurify from 'dompurify'
 import { remark } from 'remark'
+import gfm from 'remark-gfm'
 import html from 'remark-html'
 
 // mdをHTMLに変換する関数、サニタイズもされている
 export default async function markdownToHtml(mdData: string) {
-  const rawHtml = await remark().use(html, { sanitize: false }).process(mdData)
+  const rawHtml = await remark()
+    .use(html, { sanitize: false })
+    .use(gfm)
+    .process(mdData)
   return DOMPurify.sanitize(rawHtml.toString(), {
     ALLOWED_TAGS: [
       'h1',

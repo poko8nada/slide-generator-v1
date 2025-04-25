@@ -6,6 +6,7 @@ import 'reveal.js/dist/reveal.css'
 import 'reveal.js/dist/theme/black.css'
 import { layoutStyleString } from './custom-layout-style'
 import { useReveal } from './useReveal'
+import 'highlight.js/styles/monokai.min.css'
 
 export default function MarkdownSlides() {
   const { mdData, activeSlideIndex } = useMdData()

@@ -1,7 +1,7 @@
-// import { parseFrontMatter } from './frontMatter'
 import markdownToHtml from '@/lib/parse'
+import hljs from 'highlight.js'
 import { type RefObject, useCallback, useEffect, useRef } from 'react'
-import Reveal from 'reveal.js'
+import type Reveal from 'reveal.js'
 
 export function useReveal(
   containerRef: RefObject<HTMLDivElement | null>,
@@ -11,8 +11,10 @@ export function useReveal(
 ) {
   const revealRef = useRef<Reveal.Api | null>(null)
   const getSlides = useCallback((md: string) => {
-    // Markdownをスライドに分割
-    const slides = md.split('---').map(content => content.trim())
+    // Markdownをスライドに分割 (3本のハイフンのみを対象)
+    const slides = md
+      .split(/(?<=\n|^)---(?=\n|$)/)
+      .map(content => content.trim())
 
     // スライドをHTMLに変換
     const htmlSlides = Promise.all(
@@ -38,6 +40,10 @@ export function useReveal(
         if (index !== activeSlideIndex) {
           section.setAttribute('hidden', '')
         }
+        // biome-ignore lint/complexity/noForEach: <explanation>
+        section.querySelectorAll('pre code').forEach(block => {
+          hljs.highlightElement(block as HTMLElement) // コードブロックをハイライト
+        })
         return section
       })
 
@@ -71,23 +77,26 @@ export function useReveal(
 
   useEffect(() => {
     if (revealRef.current) return
-    if (!containerRef.current) return
 
-    revealRef.current = new Reveal(containerRef.current, {
-      embedded: true, // 埋め込みモード
-      autoSlide: false, // 自動スライド無効
-      transition: 'slide', // トランジション
-      autoAnimate: false, // アニメーションによるズレを防止
-      disableLayout: false, // レイアウト計算を有効
-    })
-    // Reveal.jsの初期化
-    revealRef.current.initialize()
+    const init = async () => {
+      if (!containerRef.current) return
+      const Reveal = (await import('reveal.js')).default
 
-    const initializeSlides = async () => {
+      revealRef.current = new Reveal(containerRef.current, {
+        embedded: true,
+        autoSlide: false,
+        transition: 'slide',
+        autoAnimate: false,
+        disableLayout: false,
+      })
+
+      await revealRef.current.initialize()
+
       const slides = await getSlides(mdData)
       updateSlides(slides)
     }
-    initializeSlides()
+
+    init()
 
     return () => {
       // クリーンアップ

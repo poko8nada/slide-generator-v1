@@ -18,6 +18,7 @@ export default function EditMarkdown() {
 
   const options: SimpleMDEReactProps['options'] = useMemo(
     () => ({
+      scrollbarStyle: 'native',
       spellChecker: false,
       uploadImage: true,
       imageUploadFunction,
