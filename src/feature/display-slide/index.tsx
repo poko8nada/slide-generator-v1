@@ -83,6 +83,7 @@ export default function MarkdownSlides() {
 
       // Reveal.jsに同期
       requestAnimationFrame(() => {
+        if (!revealRef.current) return
         try {
           revealRef.current.sync() // スライド構造を更新
           revealRef.current.layout() // スライド表示を再計算

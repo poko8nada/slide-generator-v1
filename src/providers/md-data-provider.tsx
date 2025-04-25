@@ -3,16 +3,24 @@ import { type ReactNode, createContext, useContext, useState } from 'react'
 
 // Create the context
 const MdDataContext = createContext<
-  | { mdData: string; setMdData: React.Dispatch<React.SetStateAction<string>> }
+  | {
+      mdData: string
+      setMdData: React.Dispatch<React.SetStateAction<string>>
+      activeSlideIndex: number
+      setActiveSlideIndex: React.Dispatch<React.SetStateAction<number>>
+    }
   | undefined
 >(undefined)
 
 // Provider component
 export const MdDataProvider = ({ children }: { children: ReactNode }) => {
-  const [mdData, setMdData] = useState<string>('')
+  const [mdData, setMdData] = useState<string>('# Slide 1\n---\n# Slide 2')
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0) // 編集中のスライド
 
   return (
-    <MdDataContext.Provider value={{ mdData, setMdData }}>
+    <MdDataContext.Provider
+      value={{ mdData, setMdData, activeSlideIndex, setActiveSlideIndex }}
+    >
       {children}
     </MdDataContext.Provider>
   )

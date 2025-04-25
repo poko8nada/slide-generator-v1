@@ -11,10 +11,10 @@ import {
 import useMde from './useMde'
 
 export default function EditMarkdown() {
-  const { mdData, setMdData } = useMdData()
+  const { mdData, setMdData, setActiveSlideIndex } = useMdData()
   const mdeRef = useRef<{ getMdeInstance: () => EasyMDE } | null>(null)
 
-  useMde(mdData, mdeRef)
+  useMde(mdData, mdeRef, setActiveSlideIndex)
 
   const options: SimpleMDEReactProps['options'] = useMemo(
     () => ({

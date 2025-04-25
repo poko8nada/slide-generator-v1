@@ -3,6 +3,7 @@ import { useCallback, useEffect } from 'react'
 export default function useMde(
   mdData: string,
   mdeRef: React.RefObject<{ getMdeInstance: () => EasyMDE } | null>,
+  setActiveSlideIndex: React.Dispatch<React.SetStateAction<number>>,
 ) {
   const updateActiveSlide = useCallback(() => {
     if (!mdData) return
@@ -16,9 +17,9 @@ export default function useMde(
     const textBeforeCursor = mdData.slice(0, cm.indexFromPos(cursor))
     const slideBreaks = textBeforeCursor.split('---').length - 1
     const slideIndex = Math.max(0, slideBreaks)
-    // setActiveSlideIndex(slideIndex);
+    setActiveSlideIndex(slideIndex)
     console.log(`Current slide index: ${slideIndex}`) // デバッグ用;
-  }, [mdData, mdeRef])
+  }, [mdData, mdeRef, setActiveSlideIndex])
 
   useEffect(() => {
     const mdeInstance = mdeRef.current?.getMdeInstance()
