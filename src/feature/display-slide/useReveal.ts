@@ -1,74 +1,109 @@
-import { type RefObject, useEffect, useRef } from 'react'
+// import { parseFrontMatter } from './frontMatter'
+import markdownToHtml from '@/lib/parse'
+import { type RefObject, useCallback, useEffect, useRef } from 'react'
 import Reveal from 'reveal.js'
-import RevealMarkdown from 'reveal.js/plugin/markdown/markdown.esm.js'
-import { parseFrontMatter } from './frontMatter'
 
 export function useReveal(
   containerRef: RefObject<HTMLDivElement | null>,
-  mdData: string | null,
+  mdData: string,
+  slidesRef: RefObject<HTMLDivElement | null>,
+  activeSlideIndex: number,
 ) {
   const revealRef = useRef<Reveal.Api | null>(null)
-  console.log(revealRef.current)
+  const getSlides = useCallback((md: string) => {
+    // Markdownをスライドに分割
+    const slides = md.split('---').map(content => content.trim())
+
+    // スライドをHTMLに変換
+    const htmlSlides = Promise.all(
+      slides.map(async slide => {
+        return await markdownToHtml(slide)
+      }),
+    )
+    return slides.length > 0 ? htmlSlides : Promise.resolve([''])
+  }, [])
+
+  const updateSlides = useCallback(
+    (slides: string[]) => {
+      if (!slidesRef.current || !revealRef.current) return
+
+      const slidesContainer = slidesRef.current
+      const currentSlides = Array.from(slidesContainer.children)
+
+      // 新しいスライドを作成
+      const newSlides = slides.map((html, index) => {
+        const section = document.createElement('section')
+        section.innerHTML = html // 安全なHTMLをセット
+        // アクティブスライド以外にhidden属性をセット
+        if (index !== activeSlideIndex) {
+          section.setAttribute('hidden', '')
+        }
+        return section
+      })
+
+      // 古いスライドを削除
+      // biome-ignore lint/complexity/noForEach: <explanation>
+      currentSlides.forEach(slide => {
+        if (slide.parentNode) {
+          slide.parentNode.removeChild(slide)
+        }
+      })
+
+      // 新しいスライドを追加
+      // biome-ignore lint/complexity/noForEach: <explanation>
+      newSlides.forEach(slide => slidesContainer.appendChild(slide))
+
+      // Reveal.jsに同期
+      requestAnimationFrame(() => {
+        if (!revealRef.current) return
+        try {
+          revealRef.current.sync() // スライド構造を更新
+          revealRef.current.layout() // スライド表示を再計算
+          // アクティブスライドを強制設定
+          revealRef.current.slide(activeSlideIndex, 0)
+        } catch (error) {
+          console.error('Reveal.js update error:', error)
+        }
+      })
+    },
+    [activeSlideIndex, slidesRef],
+  )
 
   useEffect(() => {
-    if (!containerRef.current || !mdData) return
+    if (revealRef.current) return
+    if (!containerRef.current) return
 
-    // Reveal を破棄
-    if (revealRef.current) {
-      try {
-        revealRef.current.destroy()
-      } catch (error) {
-        console.error('Reveal destroy error:', error)
-      }
-      revealRef.current = null
-    }
-
-    // スライド内容の差し替え
-    const { frontMatter, body } = parseFrontMatter(mdData)
-    const { layout, position, common } = frontMatter
-
-    containerRef.current.innerHTML = `
-      <div class="slides">
-        <div class="common ${layout} ${position}">
-          <span class="text">${common}</span><span class="numbered"></span>
-        </div>
-        <section data-markdown>
-          <textarea data-template>
-          ${body}
-          </textarea>
-        </section>
-      </div>
-    `
-
-    // Reveal 再初期化
-    const revealInstance = new Reveal(containerRef.current, {
-      transition: 'slide',
-      plugins: [RevealMarkdown],
-      markdown: {
-        smartypants: true,
-        smartLists: true,
-      },
+    revealRef.current = new Reveal(containerRef.current, {
+      embedded: true, // 埋め込みモード
+      autoSlide: false, // 自動スライド無効
+      transition: 'slide', // トランジション
+      autoAnimate: false, // アニメーションによるズレを防止
+      disableLayout: false, // レイアウト計算を有効
     })
+    // Reveal.jsの初期化
+    revealRef.current.initialize()
 
-    revealInstance
-      .initialize({
-        embedded: true,
-        keyboard: false,
-      })
-      .then(() => {
-        // 元のスライド位置に戻す
-        revealInstance.slide(2)
-      })
-
-    revealRef.current = revealInstance
+    const initializeSlides = async () => {
+      const slides = await getSlides(mdData)
+      updateSlides(slides)
+    }
+    initializeSlides()
 
     return () => {
-      try {
-        revealRef.current?.destroy()
-      } catch (error) {
-        console.error('Reveal cleanup error:', error)
+      // クリーンアップ
+      if (revealRef.current) {
+        revealRef.current.destroy()
+        revealRef.current = null
       }
-      revealRef.current = null
     }
-  }, [containerRef, mdData])
+  }, [getSlides, mdData, updateSlides, containerRef])
+
+  useEffect(() => {
+    // Markdown更新時にスライドを更新
+    const update = async () => {
+      const slides = await getSlides(mdData)
+      updateSlides(slides)
+    }
+    update()
+  }, [mdData, getSlides, updateSlides])
 }

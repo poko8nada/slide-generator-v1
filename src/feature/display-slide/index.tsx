@@ -1,115 +1,18 @@
 'use client'
 
 import { useMdData } from '@/providers/md-data-provider'
-import { useCallback, useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import 'reveal.js/dist/reveal.css'
 import 'reveal.js/dist/theme/black.css'
-import markdownToHtml from '@/lib/parse'
-import Reveal from 'reveal.js'
 import { layoutStyleString } from './custom-layout-style'
+import { useReveal } from './useReveal'
 
 export default function MarkdownSlides() {
   const { mdData, activeSlideIndex } = useMdData()
-  const revealRef = useRef<Reveal.Api | null>(null) // Reveal.jsインスタンスを保持
   const containerRef = useRef<HTMLDivElement | null>(null) // スライドコンテナの参照
   const slidesRef = useRef<HTMLDivElement | null>(null) // .slides要素
 
-  const getSlides = useCallback((md: string) => {
-    // Markdownをスライドに分割
-    const slides = md.split('---').map(content => content.trim())
-
-    // スライドをHTMLに変換
-    const htmlSlides = Promise.all(
-      slides.map(async slide => {
-        return await markdownToHtml(slide)
-      }),
-    )
-    return slides.length > 0 ? htmlSlides : Promise.resolve([''])
-  }, [])
-
-  const updateSlides = useCallback(
-    (slides: string[]) => {
-      if (!slidesRef.current || !revealRef.current) return
-
-      const slidesContainer = slidesRef.current
-      const currentSlides = Array.from(slidesContainer.children)
-
-      // 新しいスライドを作成
-      const newSlides = slides.map((html, index) => {
-        const section = document.createElement('section')
-        section.innerHTML = html // 安全なHTMLをセット
-        // アクティブスライド以外にhidden属性をセット
-        if (index !== activeSlideIndex) {
-          section.setAttribute('hidden', '')
-        }
-        return section
-      })
-
-      // 古いスライドを削除
-      // biome-ignore lint/complexity/noForEach: <explanation>
-      currentSlides.forEach(slide => {
-        if (slide.parentNode) {
-          slide.parentNode.removeChild(slide)
-        }
-      })
-
-      // 新しいスライドを追加
-      // biome-ignore lint/complexity/noForEach: <explanation>
-      newSlides.forEach(slide => slidesContainer.appendChild(slide))
-
-      // Reveal.jsに同期
-      requestAnimationFrame(() => {
-        if (!revealRef.current) return
-        try {
-          revealRef.current.sync() // スライド構造を更新
-          revealRef.current.layout() // スライド表示を再計算
-          // アクティブスライドを強制設定
-          revealRef.current.slide(activeSlideIndex, 0)
-        } catch (error) {
-          console.error('Reveal.js update error:', error)
-        }
-      })
-    },
-    [activeSlideIndex],
-  )
-
-  useEffect(() => {
-    if (revealRef.current) return
-    if (!containerRef.current) return
-
-    revealRef.current = new Reveal(containerRef.current, {
-      embedded: true, // 埋め込みモード
-      autoSlide: false, // 自動スライド無効
-      transition: 'slide', // トランジション
-      autoAnimate: false, // アニメーションによるズレを防止
-      disableLayout: false, // レイアウト計算を有効
-    })
-    // Reveal.jsの初期化
-    revealRef.current.initialize()
-
-    const initializeSlides = async () => {
-      const slides = await getSlides(mdData)
-      updateSlides(slides)
-    }
-    initializeSlides()
-
-    return () => {
-      // クリーンアップ
-      if (revealRef.current) {
-        revealRef.current.destroy()
-        revealRef.current = null
-      }
-    }
-  }, [getSlides, mdData, updateSlides])
-
-  useEffect(() => {
-    // Markdown更新時にスライドを更新
-    const update = async () => {
-      const slides = await getSlides(mdData)
-      updateSlides(slides)
-    }
-    update()
-  }, [mdData, getSlides, updateSlides])
+  useReveal(containerRef, mdData, slidesRef, activeSlideIndex)
 
   return (
     <div className='flex flex-col min-h-[500px]'>
