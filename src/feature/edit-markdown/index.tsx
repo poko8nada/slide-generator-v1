@@ -1,16 +1,20 @@
 'use client'
 import MarkdownEditor from '@/components/markdown-editor'
 import { useMdData } from '@/providers/md-data-provider'
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import type { SimpleMDEReactProps } from 'react-simplemde-editor'
 import {
   clearAction,
   imageUploadAction,
   imageUploadFunction,
 } from './markdownAction'
+import useMde from './useMde'
 
 export default function EditMarkdown() {
   const { mdData, setMdData } = useMdData()
+  const mdeRef = useRef<{ getMdeInstance: () => EasyMDE } | null>(null)
+
+  useMde(mdData, mdeRef)
 
   const options: SimpleMDEReactProps['options'] = useMemo(
     () => ({
@@ -56,7 +60,12 @@ export default function EditMarkdown() {
 
   return (
     <div className='container'>
-      <MarkdownEditor mdData={mdData} setMdData={setMdData} options={options} />
+      <MarkdownEditor
+        mdData={mdData}
+        setMdData={setMdData}
+        options={options}
+        mdeRef={mdeRef}
+      />
     </div>
   )
 }
