@@ -15,7 +15,8 @@ export default function useMde(
     const cm = mdeInstance.codemirror
     const cursor = cm.getCursor()
     const textBeforeCursor = mdData.slice(0, cm.indexFromPos(cursor))
-    const slideBreaks = textBeforeCursor.split('---').length - 1
+    //  スライドの区切り(3本のハイフンのみを対象)
+    const slideBreaks = textBeforeCursor.split(/(?<=\n|^)---(?=\n|$)/).length - 1
     const slideIndex = Math.max(0, slideBreaks)
     setActiveSlideIndex(slideIndex)
     console.log(`Current slide index: ${slideIndex}`) // デバッグ用;
