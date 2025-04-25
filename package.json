@@ -13,17 +13,15 @@
 		"cf-typegen": "wrangler types --env-interface CloudflareEnv env.d.ts"
 	},
 	"dependencies": {
-		"@marp-team/marp-core": "^4.0.1",
 		"dompurify": "^3.2.5",
 		"easymde": "^2.20.0",
-		"isomorphic-dompurify": "^2.24.0",
-		"marked": "^15.0.10",
 		"next": "15.3.0",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"react-simplemde-editor": "^5.2.0",
 		"rehype": "^13.0.2",
 		"remark": "^15.0.1",
+		"remark-html": "^16.0.1",
 		"reveal.js": "^5.2.1"
 	},
 	"devDependencies": {

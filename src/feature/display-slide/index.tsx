@@ -4,8 +4,7 @@ import { useMdData } from '@/providers/md-data-provider'
 import { useCallback, useEffect, useRef } from 'react'
 import 'reveal.js/dist/reveal.css'
 import 'reveal.js/dist/theme/black.css'
-import DOMPurify from 'dompurify'
-import { marked } from 'marked'
+import markdownToHtml from '@/lib/parse'
 import Reveal from 'reveal.js'
 import { layoutStyleString } from './custom-layout-style'
 
@@ -15,38 +14,17 @@ export default function MarkdownSlides() {
   const containerRef = useRef<HTMLDivElement | null>(null) // スライドコンテナの参照
   const slidesRef = useRef<HTMLDivElement | null>(null) // .slides要素
 
-  console.log(revealRef.current)
-
   const getSlides = useCallback((md: string) => {
     // Markdownをスライドに分割
     const slides = md.split('---').map(content => content.trim())
 
-    // 各スライドをHTMLに変換
-    return slides.map(content => {
-      const html = marked(content, {
-        gfm: true, // GitHub Flavored Markdown
-        breaks: true, // 改行を<br>に
-      })
-      // サニタイズ
-      return DOMPurify.sanitize(html, {
-        ALLOWED_TAGS: [
-          'h1',
-          'h2',
-          'h3',
-          'p',
-          'img',
-          'br',
-          'ul',
-          'ol',
-          'li',
-          'a',
-          'code',
-          'pre',
-        ],
-        ALLOWED_ATTR: ['src', 'alt', 'href', 'class'],
-        ALLOWED_URI_REGEXP: /^(?:(?:https?|blob):|[/#])/i,
-      })
-    })
+    // スライドをHTMLに変換
+    const htmlSlides = Promise.all(
+      slides.map(async slide => {
+        return await markdownToHtml(slide)
+      }),
+    )
+    return slides.length > 0 ? htmlSlides : Promise.resolve([''])
   }, [])
 
   const updateSlides = useCallback(
@@ -109,8 +87,11 @@ export default function MarkdownSlides() {
     // Reveal.jsの初期化
     revealRef.current.initialize()
 
-    // 初期スライドを設定
-    updateSlides(getSlides(mdData))
+    const initializeSlides = async () => {
+      const slides = await getSlides(mdData)
+      updateSlides(slides)
+    }
+    initializeSlides()
 
     return () => {
       // クリーンアップ
@@ -123,7 +104,11 @@ export default function MarkdownSlides() {
 
   useEffect(() => {
     // Markdown更新時にスライドを更新
-    updateSlides(getSlides(mdData))
+    const update = async () => {
+      const slides = await getSlides(mdData)
+      updateSlides(slides)
+    }
+    update()
   }, [mdData, getSlides, updateSlides])
 
   return (
