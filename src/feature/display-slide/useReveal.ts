@@ -88,6 +88,8 @@ export function useReveal(
         transition: 'slide',
         autoAnimate: false,
         disableLayout: false,
+        pdfMaxPagesPerSlide: 1,
+        pdfSeparateFragments: true,
       })
 
       await revealRef.current.initialize()

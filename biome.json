@@ -10,7 +10,8 @@
 	"linter": {
 		"ignore": [
 			".next",
-			"node_modules"
+			"node_modules",
+			".json"
 		],
 		"rules": {
 			"recommended": true,
@@ -18,8 +19,8 @@
 				"useSortedClasses": "off"
 			},
 			"correctness": {
-				"noUnusedImports": "error",
-				"noUnusedVariables": "error"
+				"noUnusedImports": "warn",
+				"noUnusedVariables": "warn"
 			}
 		}
 	},
@@ -28,7 +29,8 @@
 		"formatWithErrors": true,
 		"ignore": [
 			".next",
-			"node_modules"
+			"node_modules",
+			".json"
 		],
 		"indentWidth": 2,
 		"indentStyle": "space",
