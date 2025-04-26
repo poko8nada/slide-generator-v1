@@ -90,6 +90,7 @@ export function useReveal(
         disableLayout: false,
         pdfMaxPagesPerSlide: 1,
         pdfSeparateFragments: true,
+        keyboard: false,
       })
 
       await revealRef.current.initialize()
