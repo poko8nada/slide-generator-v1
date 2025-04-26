@@ -3,11 +3,17 @@
 		"wrangler.json": "jsonc"
 	},
 	"cSpell.words": [
+		"adipiscing",
+		"Donec",
 		"easymde",
 		"indexh",
+		"lectus",
+		"loermm",
 		"Marp",
+		"mauris",
 		"simplemde",
 		"slidechanged",
-		"Supabase"
+		"Supabase",
+		"usehooks"
 	]
 }
