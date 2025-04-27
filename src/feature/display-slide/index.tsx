@@ -3,7 +3,7 @@
 import { useMdData } from '@/providers/md-data-provider'
 import { useRef } from 'react'
 import 'reveal.js/dist/reveal.css'
-import 'reveal.js/dist/theme/black.css'
+import 'reveal.js/dist/theme/white.css'
 import { layoutStyleString } from './custom-layout-style'
 import { useReveal } from './useReveal'
 import 'highlight.js/styles/monokai.min.css'

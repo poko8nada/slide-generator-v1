@@ -17,7 +17,7 @@ export default function SlideSheet({
   return (
     <Sheet
       onOpenChange={(open: boolean) => setIsOpen(open)}
-      className='overflow-y-scroll'
+      className='overflow-y-scroll !min-w-[360px]'
     >
       <SheetTrigger>open</SheetTrigger>
       <SheetContent>

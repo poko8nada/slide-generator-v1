@@ -439,13 +439,13 @@
 }
 
 .reveal-print .reveal .slides .pdf-page {
-  width: 360px;
+  min-width: 360px;
   height: 270px;
   margin: auto;
 }
 
 .reveal-print .reveal .slides section {
-  width: 90%;
+  width: 86%;
   top: 0;
   left: 0;
   right: 0;
@@ -456,30 +456,50 @@
 }
 
 .reveal-print .reveal .slides section * {
-  font-size: 1rem !important;
+  font-size: .9rem !important;
 }
 
 .reveal-print .reveal .slides section h1 {
-  font-size: 1.8rem !important;
+  font-size: 1.6rem !important;
+  margin-bottom: .3em !important;
 }
 .reveal-print .reveal .slides section h2 {
-  font-size: 1.6rem !important;
+  font-size: 1.4rem !important;
+  margin-bottom: .3em !important;
 }
 .reveal-print .reveal .slides section h3 {
-  font-size: 1.4rem !important;
+  font-size: 1.2rem !important;
+  margin-bottom: .3em !important;
 }
 .reveal-print .reveal .slides section h4 {
-  font-size: 1.2rem !important;
+  font-size: 1rem !important;
+  margin-bottom: .3em !important;
 }
 
 .reveal-print .reveal .slides section p,
 .reveal-print .reveal .slides section li,
 .reveal-print .reveal .slides section pre,
-.reveal-print .reveal .slides section code,
 .reveal-print .reveal .slides section span,
 .reveal-print .reveal .slides section strong,
 .reveal-print .reveal .slides section em,
 .reveal-print .reveal .slides section td {
-  font-size: .8rem !important;
-  margin: .5em !important;
+  font-size: .9rem;
+}
+
+.reveal-print .reveal .slides section p,
+.reveal-print .reveal .slides section pre {
+  margin: .3em 0 !important;
+}
+
+.reveal-print .reveal .slides section pre:has(code) {
+  margin: auto !important;
+}
+.reveal-print .reveal .slides section code,
+.reveal-print .reveal .slides section code span {
+  margin: 0 !important;
+  font-size: .7rem !important;
+  line-height: 1.2;
+}
+.reveal-print .reveal .slides section code {
+  padding: .5em;
 }

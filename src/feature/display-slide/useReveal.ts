@@ -91,6 +91,7 @@ export function useReveal(
         pdfMaxPagesPerSlide: 1,
         pdfSeparateFragments: true,
         keyboard: false,
+        scrollActivationWidth: 0,
       })
 
       await revealRef.current.initialize()

@@ -16,21 +16,34 @@ export default function DisplayAllSlide() {
     setSnap(prev => {
       if (prev) {
         const slides = prev.querySelector('.slides')
-        slides?.removeAttribute('style')
-        slides?.removeAttribute('class')
-        slides?.setAttribute('class', 'slides')
-        const sections = prev.querySelectorAll('section')
-        console.log(sections)
+        if (!slides) return prev
+        slides.removeAttribute('style')
+        slides.removeAttribute('class')
+        slides.classList.add('slides')
 
-        // biome-ignore lint/complexity/noForEach: <explanation>
-        sections.forEach(section => {
-          const div = document.createElement('div')
-          div.classList.add('pdf-page')
+        const sections = prev.querySelectorAll('section')
+        if (!sections) return prev
+
+        const background = (child: string) => {
+          return `
+          <div class="pdf-page">
+          ${child}
+          <div class="slide-background present" data-loaded="true" style="display: block;"><div class="slide-background-content"></div></div>
+          </div>
+          `
+        }
+
+        let formattedSections = ''
+        for (const section of sections) {
           section.removeAttribute('style')
           section.removeAttribute('hidden')
-          div.appendChild(section)
-          slides?.appendChild(div)
-        })
+          formattedSections += background(section.outerHTML)
+        }
+        slides.innerHTML = formattedSections
+
+        const backgrounds = prev.querySelector('.backgrounds')
+        if (!backgrounds) return prev
+        backgrounds.innerHTML = ''
       }
       return prev
     })
