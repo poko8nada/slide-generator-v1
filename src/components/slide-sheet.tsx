@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button'
 import {
   Sheet,
   SheetContent,
@@ -19,7 +20,9 @@ export default function SlideSheet({
       onOpenChange={(open: boolean) => setIsOpen(open)}
       className='overflow-y-scroll !min-w-[360px]'
     >
-      <SheetTrigger>open</SheetTrigger>
+      <SheetTrigger asChild>
+        <Button variant='default'>Open Sheet</Button>
+      </SheetTrigger>
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Are you absolutely sure?</SheetTitle>

@@ -3,7 +3,7 @@
 import { useMdData } from '@/providers/md-data-provider'
 import { useRef } from 'react'
 import 'reveal.js/dist/reveal.css'
-import 'reveal.js/dist/theme/white.css'
+import 'reveal.js/dist/theme/black.css'
 import { layoutStyleString } from './custom-layout-style'
 import { useReveal } from './useReveal'
 import 'highlight.js/styles/monokai.min.css'
@@ -16,9 +16,6 @@ export default function MarkdownSlides() {
   const { containerRef } = useSlideContainer()
 
   useReveal(containerRef, mdData, slidesRef, activeSlideIndex)
-
-  console.log(containerRef.current)
-  console.log(slidesRef.current)
 
   return (
     <div className='flex flex-col min-h-[500px]'>

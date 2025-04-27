@@ -130,8 +130,7 @@ Webブラウザ上でMarkdown形式のテキストを入力するだけで、リ
 
 5. **PDF出力**
    - ユーザーがPDF出力ボタンをクリック。
-   - `reveal.js`のprint-pdf機能を呼び出し、PDFを生成。
-
+   - html2pdf.jsパッケージをつかってPDF出力。
 6. **保存（将来的な機能）**
    - ログインユーザーの場合、Supabase StorageにMarkdownと画像を保存。
    - 保存データはダッシュボード画面で一覧表示可能。
