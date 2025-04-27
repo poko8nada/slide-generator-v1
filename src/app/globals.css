@@ -1,26 +1,485 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.reveal-print {
+  height: 100%;
+  /* overflow: visible; */
+  width: 100%;
+}
+
+.reveal-print .nestedarrow,
+.reveal-print .reveal .controls,
+.reveal-print .reveal .playback,
+.reveal-print .reveal .progress,
+.reveal-print .reveal.overview,
+.reveal-print .state-background {
+  display: none !important;
+}
+
+.reveal-print .reveal pre code {
+  overflow: hidden !important;
+}
+
+.reveal-print .reveal {
+  height: auto !important;
+  overflow: hidden !important;
+  width: auto !important;
+}
+
+.reveal-print .reveal .slides {
+  height: auto !important;
+  position: static;
+  width: 100% !important;
+  zoom: 1 !important;
+  display: block;
+  left: auto;
+  margin: 0 !important;
+  overflow: visible;
+  padding: 0 !important;
+  perspective: none;
+  perspective-origin: 50% 50%;
+  pointer-events: auto;
+  top: auto;
+}
+
+.reveal-print .reveal .slides .pdf-page {
+  overflow: hidden;
+  page-break-after: always;
+  position: relative;
+  z-index: 1;
+}
+
+.reveal-print .reveal .slides .pdf-page:last-of-type {
+  page-break-after: avoid;
+}
+
+.reveal-print .reveal .slides section {
+  box-sizing: border-box !important;
+  display: block !important;
+  margin: 0 !important;
+  min-height: 1px;
+  opacity: 1 !important;
+  padding: 0 !important;
+  position: absolute !important;
+  transform: none !important;
+  transform-style: flat !important;
+  visibility: visible !important;
+}
+
+.reveal-print .reveal section.stack {
+  height: auto !important;
+  margin: 0 !important;
+  min-height: auto !important;
+  padding: 0 !important;
+  page-break-after: avoid !important;
+  position: relative !important;
+}
+
+.reveal-print .reveal img {
+  box-shadow: none;
+}
+
+.reveal-print .reveal .backgrounds {
+  display: none;
+}
+
+.reveal-print .reveal .slide-background {
+  display: block !important;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: auto !important;
+}
+
+.reveal-print .reveal.show-notes {
+  max-height: none;
+  max-width: none;
+}
+
+.reveal-print .reveal .speaker-notes-pdf {
+  bottom: auto;
+  display: block;
+  height: auto;
+  left: auto;
+  max-height: none;
+  right: auto;
+  top: auto;
+  width: 100%;
+  z-index: 100;
+}
+
+.reveal-print .reveal .speaker-notes-pdf[data-layout="separate-page"] {
+  background-color: transparent;
+  border: 0;
+  color: inherit;
+  padding: 20px;
+  page-break-after: always;
+  position: relative;
+}
+
+.reveal-print .reveal .slide-number-pdf {
+  display: block;
+  font-size: 14px;
+  position: absolute;
+  visibility: visible;
+}
+
+.reveal-print .aria-status {
+  display: none;
+}
+
+@media print {
+  html:not(.print-pdf) {
+    height: auto;
+    overflow: visible;
+    width: auto;
+  }
+
+  html:not(.print-pdf) body {
+    margin: 0;
+    overflow: visible;
+    padding: 0;
+  }
+
+  html:not(.print-pdf) .reveal {
+    background: #fff;
+    font-size: 20pt;
+  }
+
+  html:not(.print-pdf) .reveal .backgrounds,
+  html:not(.print-pdf) .reveal .controls,
+  html:not(.print-pdf) .reveal .progress,
+  html:not(.print-pdf) .reveal .slide-number,
+  html:not(.print-pdf) .reveal .state-background {
+    display: none !important;
+  }
+
+  html:not(.print-pdf) .reveal li,
+  html:not(.print-pdf) .reveal p,
+  html:not(.print-pdf) .reveal td {
+    color: #000;
+    font-size: 20pt !important;
+  }
+
+  html:not(.print-pdf) .reveal h1,
+  html:not(.print-pdf) .reveal h2,
+  html:not(.print-pdf) .reveal h3,
+  html:not(.print-pdf) .reveal h4,
+  html:not(.print-pdf) .reveal h5,
+  html:not(.print-pdf) .reveal h6 {
+    color: #000 !important;
+    height: auto;
+    letter-spacing: normal;
+    line-height: normal;
+    text-align: left;
+  }
+
+  html:not(.print-pdf) .reveal h1 {
+    font-size: 28pt !important;
+  }
+
+  html:not(.print-pdf) .reveal h2 {
+    font-size: 24pt !important;
+  }
+
+  html:not(.print-pdf) .reveal h3 {
+    font-size: 22pt !important;
+  }
+
+  html:not(.print-pdf) .reveal h4 {
+    font-size: 22pt !important;
+    font-variant: small-caps;
+  }
+
+  html:not(.print-pdf) .reveal h5 {
+    font-size: 21pt !important;
+  }
+
+  html:not(.print-pdf) .reveal h6 {
+    font-size: 20pt !important;
+    font-style: italic;
+  }
+
+  html:not(.print-pdf) .reveal a:link,
+  html:not(.print-pdf) .reveal a:visited {
+    color: #000 !important;
+    font-weight: 700;
+    text-decoration: underline;
+  }
+
+  html:not(.print-pdf) .reveal div,
+  html:not(.print-pdf) .reveal ol,
+  html:not(.print-pdf) .reveal p,
+  html:not(.print-pdf) .reveal ul {
+    display: block;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    position: static;
+    text-align: left !important;
+    visibility: visible;
+    width: auto;
+  }
+
+  html:not(.print-pdf) .reveal pre,
+  html:not(.print-pdf) .reveal table {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  html:not(.print-pdf) .reveal pre code {
+    padding: 20px;
+  }
+
+  html:not(.print-pdf) .reveal blockquote {
+    margin: 20px 0;
+  }
+
+  html:not(.print-pdf) .reveal .slides {
+    padding: 0 !important;
+    zoom: 1 !important;
+    perspective: none;
+    perspective-origin: 50% 50%;
+    text-align: left !important;
+    transform: none !important;
+  }
+
+  html:not(.print-pdf) .reveal .slides,
+  html:not(.print-pdf) .reveal .slides section {
+    display: block !important;
+    height: auto !important;
+    left: 0 !important;
+    margin-left: 0 !important;
+    margin-top: 0 !important;
+    overflow: visible !important;
+    position: static !important;
+    top: 0 !important;
+    width: auto !important;
+  }
+
+  html:not(.print-pdf) .reveal .slides section {
+    opacity: 1 !important;
+    padding: 60px 20px !important;
+    page-break-after: always !important;
+    transform: none !important;
+    transform-style: flat !important;
+    transition: none !important;
+    visibility: visible !important;
+    z-index: auto !important;
+  }
+
+  html:not(.print-pdf) .reveal .slides section.stack {
+    padding: 0 !important;
+  }
+
+  html:not(.print-pdf) .reveal .slides section:last-of-type {
+    page-break-after: avoid !important;
+  }
+
+  html:not(.print-pdf) .reveal .slides section .fragment {
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+  }
+
+  html:not(.print-pdf) .reveal .r-fit-text {
+    white-space: normal !important;
+  }
+
+  html:not(.print-pdf) .reveal section img {
+    background: #fff;
+    border: 1px solid #666;
+    box-shadow: none;
+    display: block;
+    margin: 15px 0;
+  }
+
+  html:not(.print-pdf) .reveal section small {
+    font-size: .8em;
+  }
+
+  html:not(.print-pdf) .reveal .hljs {
+    max-height: 100%;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 15pt;
+    word-break: break-word;
+  }
+
+  html:not(.print-pdf) .reveal .hljs .hljs-ln-numbers {
+    white-space: nowrap;
+  }
+
+  html:not(.print-pdf) .reveal .hljs td {
+    color: inherit !important;
+    font-size: inherit !important;
+  }
+}
+
+.reveal-print .reveal .slides .pdf-page {
+  width: 360px;
+  height: 270px;
+  margin: auto;
+}
+
+.reveal-print .reveal .slides section {
+  width: 90%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute !important;
+  height: fit-content !important;
+  margin: auto !important;
+}
+
+.reveal-print .reveal .slides section * {
+  font-size: 1rem !important;
+}
+
+.reveal-print .reveal .slides section h1 {
+  font-size: 1.8rem !important;
+}
+.reveal-print .reveal .slides section h2 {
+  font-size: 1.6rem !important;
+}
+.reveal-print .reveal .slides section h3 {
+  font-size: 1.4rem !important;
+}
+.reveal-print .reveal .slides section h4 {
+  font-size: 1.2rem !important;
+}
+
+.reveal-print .reveal .slides section p,
+.reveal-print .reveal .slides section li,
+.reveal-print .reveal .slides section pre,
+.reveal-print .reveal .slides section code,
+.reveal-print .reveal .slides section span,
+.reveal-print .reveal .slides section strong,
+.reveal-print .reveal .slides section em,
+.reveal-print .reveal .slides section td {
+  font-size: .8rem !important;
+  margin: .5em !important;
 }

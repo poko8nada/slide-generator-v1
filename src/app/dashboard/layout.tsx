@@ -1,5 +1,6 @@
 'use client'
 import { MdDataProvider } from '@/providers/md-data-provider'
+import { SlideContainerProvider } from '@/providers/slide-container-provider'
 
 export default function DashboardLayout({
   children,
@@ -17,9 +18,11 @@ export default function DashboardLayout({
           <h1>Dashboard Layout</h1>
         </header>
         <main>
-          {children}
           {markdown}
-          {slide}
+          <SlideContainerProvider>
+            {slide}
+            {children}
+          </SlideContainerProvider>
         </main>
       </div>
     </MdDataProvider>

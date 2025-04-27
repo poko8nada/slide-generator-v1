@@ -7,13 +7,18 @@ import 'reveal.js/dist/theme/black.css'
 import { layoutStyleString } from './custom-layout-style'
 import { useReveal } from './useReveal'
 import 'highlight.js/styles/monokai.min.css'
+import { useSlideContainer } from '@/providers/slide-container-provider'
 
 export default function MarkdownSlides() {
   const { mdData, activeSlideIndex } = useMdData()
-  const containerRef = useRef<HTMLDivElement | null>(null) // スライドコンテナの参照
+  // const containerRef = useRef<HTMLDivElement | null>(null) // スライドコンテナの参照
   const slidesRef = useRef<HTMLDivElement | null>(null) // .slides要素
+  const { containerRef } = useSlideContainer()
 
   useReveal(containerRef, mdData, slidesRef, activeSlideIndex)
+
+  console.log(containerRef.current)
+  console.log(slidesRef.current)
 
   return (
     <div className='flex flex-col min-h-[500px]'>
