@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 
 function formatSnapContent(prev: HTMLDivElement | null): HTMLDivElement | null {
+  if (!prev) {
+    return null
+  }
   if (prev) {
     const slides = prev.querySelector('.slides')
     if (!slides) return prev
@@ -42,7 +45,12 @@ export function useCustomSnap(
   const [snap, setSnap] = useState<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    if (containerRef.current && isOpen) {
+    if (!containerRef.current) {
+      console.warn('Container reference is null in useCustomSnap.')
+      setSnap(null)
+      return
+    }
+    if (isOpen) {
       setSnap(containerRef.current.cloneNode(true) as HTMLDivElement)
     }
     setSnap(prev => formatSnapContent(prev))
