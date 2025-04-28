@@ -61,7 +61,13 @@ export function useReveal(
 
       // Reveal.jsに同期
       requestAnimationFrame(() => {
-        if (!revealRef.current) return
+        if (!revealRef.current) {
+          console.log('revealRef.current is null')
+          return
+        }
+        console.log(
+          'Calling revealRef.current.sync and revealRef.current.layout',
+        )
         try {
           revealRef.current.sync() // スライド構造を更新
           revealRef.current.layout() // スライド表示を再計算
@@ -79,25 +85,29 @@ export function useReveal(
     if (revealRef.current) return
 
     const init = async () => {
-      if (!containerRef.current) return
-      const Reveal = (await import('reveal.js')).default
+      try {
+        if (!containerRef.current) return
+        const Reveal = (await import('reveal.js')).default
 
-      revealRef.current = new Reveal(containerRef.current, {
-        embedded: true,
-        autoSlide: false,
-        transition: 'slide',
-        autoAnimate: false,
-        disableLayout: false,
-        pdfMaxPagesPerSlide: 1,
-        pdfSeparateFragments: true,
-        keyboard: false,
-        scrollActivationWidth: 0,
-      })
+        revealRef.current = new Reveal(containerRef.current, {
+          embedded: true,
+          autoSlide: false,
+          transition: 'slide',
+          autoAnimate: false,
+          disableLayout: false,
+          pdfMaxPagesPerSlide: 1,
+          pdfSeparateFragments: true,
+          keyboard: false,
+          scrollActivationWidth: 0,
+        })
 
-      await revealRef.current.initialize()
+        await revealRef.current.initialize()
 
-      const slides = await getSlides(mdData)
-      updateSlides(slides)
+        const slides = await getSlides(mdData)
+        updateSlides(slides)
+      } catch (error) {
+        throw new Error(`Initialization error: ${error}`)
+      }
     }
 
     init()
@@ -114,8 +124,12 @@ export function useReveal(
   useEffect(() => {
     // Markdown更新時にスライドを更新
     const update = async () => {
-      const slides = await getSlides(mdData)
-      updateSlides(slides)
+      try {
+        const slides = await getSlides(mdData)
+        updateSlides(slides)
+      } catch (error) {
+        throw new Error(`Slide update error: ${error}`)
+      }
     }
     update()
   }, [mdData, getSlides, updateSlides])
