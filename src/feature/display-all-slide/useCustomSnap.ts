@@ -46,7 +46,7 @@ export function useCustomSnap(
 
   useEffect(() => {
     if (!containerRef.current) {
-      console.warn('Container reference is null in useCustomSnap.')
+      console.log('Container reference is null in useCustomSnap.')
       setSnap(null)
       return
     }

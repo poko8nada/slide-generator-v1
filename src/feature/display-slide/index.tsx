@@ -15,6 +15,8 @@ export default function MarkdownSlides() {
   const slidesRef = useRef<HTMLDivElement | null>(null) // .slides要素
   const { containerRef } = useSlideContainer()
 
+  console.log(containerRef)
+
   useReveal(containerRef, mdData, slidesRef, activeSlideIndex)
 
   return (
@@ -27,9 +29,13 @@ export default function MarkdownSlides() {
         </p>
       </div>
 
-      <div className='flex-1 reveal !cursor-auto' ref={containerRef}>
-        <div className='slides' ref={slidesRef} />
-      </div>
+      {!containerRef ? (
+        <div>Loading...</div>
+      ) : (
+        <div className='flex-1 reveal !cursor-auto' ref={containerRef}>
+          <div className='slides' ref={slidesRef} />
+        </div>
+      )}
     </div>
   )
 }

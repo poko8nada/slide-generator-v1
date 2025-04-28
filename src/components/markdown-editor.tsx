@@ -2,10 +2,12 @@ import dynamic from 'next/dynamic'
 import 'easymde/dist/easymde.min.css'
 import type EasyMDE from 'easymde'
 import type { SimpleMDEReactProps } from 'react-simplemde-editor'
+import MdeLoader from './mde-loader'
 
 // Dynamic import for SimpleMDE to disable SSR
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
   ssr: false,
+  loading: () => <MdeLoader />,
 })
 
 export default function MarkdownEditor({
