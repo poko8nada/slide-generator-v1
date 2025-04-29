@@ -24,14 +24,8 @@ export default function MarkdownSlides() {
 
   console.log('after init')
   return (
-    <div className='flex flex-col'>
+    <div className='container'>
       <style>{layoutStyleString}</style>
-      <div className='p-4 border-b'>
-        <h2 className='font-bold text-xl'>リアルタイム Markdown スライド</h2>
-        <p className='text-sm text-gray-600'>
-          Markdownが変更されると自動的にスライドが更新されます
-        </p>
-      </div>
 
       <div className='relative h-[400px]'>
         {loading && <Loader />}
