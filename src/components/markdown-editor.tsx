@@ -2,12 +2,12 @@ import dynamic from 'next/dynamic'
 import 'easymde/dist/easymde.min.css'
 import type EasyMDE from 'easymde'
 import type { SimpleMDEReactProps } from 'react-simplemde-editor'
-import MdeLoader from './mde-loader'
+import Loader from './loader'
 
 // Dynamic import for SimpleMDE to disable SSR
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
   ssr: false,
-  loading: () => <MdeLoader />,
+  loading: () => <Loader />,
 })
 
 export default function MarkdownEditor({
@@ -22,13 +22,15 @@ export default function MarkdownEditor({
   mdeRef: React.RefObject<{ getMdeInstance: () => EasyMDE } | null>
 }) {
   return (
-    <SimpleMDE
-      value={mdData}
-      onChange={setMdData}
-      options={options}
-      getMdeInstance={instance => {
-        mdeRef.current = { getMdeInstance: () => instance }
-      }}
-    />
+    <div className='relative min-h-[400px]'>
+      <SimpleMDE
+        value={mdData}
+        onChange={setMdData}
+        options={options}
+        getMdeInstance={instance => {
+          mdeRef.current = { getMdeInstance: () => instance }
+        }}
+      />
+    </div>
   )
 }

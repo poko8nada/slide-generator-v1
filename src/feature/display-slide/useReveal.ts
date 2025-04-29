@@ -80,6 +80,7 @@ export function useRevealInit(
   slidesRef: RefObject<HTMLDivElement | null>,
   containerRef: RefObject<HTMLDivElement | null>,
   revealRef: RefObject<Reveal.Api | null>,
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
   // refはuseEffectの依存配列に含めなくてよい
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -108,6 +109,7 @@ export function useRevealInit(
         await revealRef.current.initialize()
 
         console.log('Reveal.js initialized.')
+        setLoading(false)
       } catch (error) {
         throw new Error(`Initialization error: ${error}`)
       }
