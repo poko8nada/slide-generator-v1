@@ -21,7 +21,7 @@ export const SlideContainerProvider: React.FC<{ children: ReactNode }> = ({
   )
 }
 
-export const useSlideContainer = (): SlideContainerContextProps => {
+export const useSlide = (): SlideContainerContextProps => {
   const context = useContext(SlideContainerContext)
   if (!context) {
     throw new Error(
