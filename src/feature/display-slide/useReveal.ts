@@ -1,97 +1,95 @@
 import markdownToHtml from '@/lib/parse'
 import hljs from 'highlight.js'
-import { type RefObject, useCallback, useEffect, useRef } from 'react'
+import { type RefObject, useEffect } from 'react'
 import type Reveal from 'reveal.js'
 
-export function useReveal(
-  containerRef: RefObject<HTMLDivElement | null>,
+const getSlides = (md: string) => {
+  // Markdownをスライドに分割 (3本のハイフンのみを対象)
+  const slides = md.split(/(?<=\n|^)---(?=\n|$)/).map(content => content.trim())
+
+  // スライドをHTMLに変換
+  const htmlSlides = Promise.all(
+    slides.map(async slide => {
+      return await markdownToHtml(slide)
+    }),
+  )
+  return slides.length > 0 ? htmlSlides : Promise.resolve([''])
+}
+
+const setSlide = (
+  slides: string[],
+  slidesRef: RefObject<HTMLDivElement | null>,
+  revealRef: RefObject<Reveal.Api | null>,
+  activeSlideIndex: number,
+) => {
+  if (!slidesRef.current || !revealRef.current) return
+
+  const slidesContainer = slidesRef.current
+  const currentSlides = Array.from(slidesContainer.children)
+
+  // 新しいスライドを作成
+  const newSlides = slides.map((html, index) => {
+    const section = document.createElement('section')
+    section.innerHTML = html // 安全なHTMLをセット
+    // アクティブスライド以外にhidden属性をセット
+    if (index !== activeSlideIndex) {
+      section.setAttribute('hidden', '')
+    }
+    // biome-ignore lint/complexity/noForEach: <explanation>
+    section.querySelectorAll('pre code').forEach(block => {
+      hljs.highlightElement(block as HTMLElement) // コードブロックをハイライト
+    })
+    return section
+  })
+
+  // 古いスライドを削除
+  for (const slide of currentSlides) {
+    if (slide.parentNode) {
+      slide.parentNode.removeChild(slide)
+    }
+  }
+
+  // 新しいスライドを追加
+  for (const slide of newSlides) {
+    slidesContainer.appendChild(slide)
+  }
+}
+
+const updateSlides = (
+  activeSlideIndex: number,
+  revealRef: RefObject<Reveal.Api | null>,
+) => {
+  if (!revealRef.current) return
+
+  // Reveal.jsに同期
+  requestAnimationFrame(() => {
+    if (!revealRef.current) return
+    try {
+      revealRef.current.sync() // スライド構造を更新
+      revealRef.current.layout() // スライド表示を再計算
+      // アクティブスライドを強制設定
+      revealRef.current.slide(activeSlideIndex, 0)
+    } catch (error) {
+      console.error('Reveal.js update error:', error)
+    }
+  })
+}
+
+export function useRevealInit(
   mdData: string,
   slidesRef: RefObject<HTMLDivElement | null>,
-  activeSlideIndex: number,
+  containerRef: RefObject<HTMLDivElement | null>,
+  revealRef: RefObject<Reveal.Api | null>,
 ) {
-  const revealRef = useRef<Reveal.Api | null>(null)
-  const getSlides = useCallback((md: string) => {
-    // Markdownをスライドに分割 (3本のハイフンのみを対象)
-    const slides = md
-      .split(/(?<=\n|^)---(?=\n|$)/)
-      .map(content => content.trim())
-
-    // スライドをHTMLに変換
-    const htmlSlides = Promise.all(
-      slides.map(async slide => {
-        return await markdownToHtml(slide)
-      }),
-    )
-    return slides.length > 0 ? htmlSlides : Promise.resolve([''])
-  }, [])
-
-  const updateSlides = useCallback(
-    (slides: string[]) => {
-      if (!slidesRef.current || !revealRef.current) return
-
-      const slidesContainer = slidesRef.current
-      const currentSlides = Array.from(slidesContainer.children)
-
-      // 新しいスライドを作成
-      const newSlides = slides.map((html, index) => {
-        const section = document.createElement('section')
-        section.innerHTML = html // 安全なHTMLをセット
-        // アクティブスライド以外にhidden属性をセット
-        if (index !== activeSlideIndex) {
-          section.setAttribute('hidden', '')
-        }
-        // biome-ignore lint/complexity/noForEach: <explanation>
-        section.querySelectorAll('pre code').forEach(block => {
-          hljs.highlightElement(block as HTMLElement) // コードブロックをハイライト
-        })
-        return section
-      })
-
-      // 古いスライドを削除
-      // biome-ignore lint/complexity/noForEach: <explanation>
-      currentSlides.forEach(slide => {
-        if (slide.parentNode) {
-          slide.parentNode.removeChild(slide)
-        }
-      })
-
-      // 新しいスライドを追加
-      // biome-ignore lint/complexity/noForEach: <explanation>
-      newSlides.forEach(slide => slidesContainer.appendChild(slide))
-
-      // Reveal.jsに同期
-      requestAnimationFrame(() => {
-        if (!revealRef.current) {
-          console.log('revealRef.current is null')
-          return
-        }
-        console.log(
-          'Calling revealRef.current.sync and revealRef.current.layout',
-        )
-        try {
-          revealRef.current.sync() // スライド構造を更新
-          revealRef.current.layout() // スライド表示を再計算
-          // アクティブスライドを強制設定
-          revealRef.current.slide(activeSlideIndex, 0)
-        } catch (error) {
-          console.error('Reveal.js update error:', error)
-        }
-      })
-    },
-    [activeSlideIndex, slidesRef],
-  )
-
+  // refはuseEffectの依存配列に含めなくてよい
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (revealRef.current) return
-
     const init = async () => {
       try {
         if (!containerRef.current) return
 
         const Reveal = (await import('reveal.js')).default
-
-        console.log('Reveal.js initialized.')
-
         revealRef.current = new Reveal(containerRef.current, {
           embedded: true,
           autoSlide: false,
@@ -104,17 +102,23 @@ export function useReveal(
           scrollActivationWidth: 0,
         })
 
+        const slides = await getSlides(mdData)
+        setSlide(slides, slidesRef, revealRef, 0)
+
         await revealRef.current.initialize()
 
-        const slides = await getSlides(mdData)
-        updateSlides(slides)
+        console.log('Reveal.js initialized.')
       } catch (error) {
         throw new Error(`Initialization error: ${error}`)
       }
     }
 
     init()
+  }, [mdData])
 
+  // refはuseEffectの依存配列に含めなくてよい
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
     return () => {
       // クリーンアップ
       if (revealRef.current) {
@@ -122,18 +126,30 @@ export function useReveal(
         revealRef.current = null
       }
     }
-  }, [getSlides, mdData, updateSlides, containerRef])
+  }, [])
+}
 
+export function useRevealUpdate(
+  mdData: string,
+  slidesRef: RefObject<HTMLDivElement | null>,
+  activeSlideIndex: number,
+  revealRef: RefObject<Reveal.Api | null>,
+) {
+  // refはuseEffectの依存配列に含めなくてよい
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    // Markdown更新時にスライドを更新
+    if (!revealRef.current || !slidesRef.current) return
+
     const update = async () => {
       try {
         const slides = await getSlides(mdData)
-        updateSlides(slides)
+        setSlide(slides, slidesRef, revealRef, 0)
+        updateSlides(activeSlideIndex, revealRef)
       } catch (error) {
         throw new Error(`Slide update error: ${error}`)
       }
     }
     update()
-  }, [mdData, getSlides, updateSlides])
+    console.log('setSlide')
+  }, [mdData, activeSlideIndex])
 }

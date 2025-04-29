@@ -5,18 +5,23 @@ import { useRef } from 'react'
 import 'reveal.js/dist/reveal.css'
 import 'reveal.js/dist/theme/black.css'
 import { layoutStyleString } from './custom-layout-style'
-import { useReveal } from './useReveal'
+import { useRevealInit, useRevealUpdate } from './useReveal'
 import 'highlight.js/styles/monokai.min.css'
+import SlideViewer from '@/components/slide-viewer'
 import { useSlideContainer } from '@/providers/slide-container-provider'
 
 export default function MarkdownSlides() {
   const { mdData, activeSlideIndex } = useMdData()
-  // const containerRef = useRef<HTMLDivElement | null>(null) // スライドコンテナの参照
-  const slidesRef = useRef<HTMLDivElement | null>(null) // .slides要素
+  const slidesRef = useRef<HTMLDivElement | null>(null)
   const { containerRef } = useSlideContainer()
+  const revealRef = useRef<Reveal.Api | null>(null)
 
-  useReveal(containerRef, mdData, slidesRef, activeSlideIndex)
+  console.log('before init')
 
+  useRevealInit(mdData, slidesRef, containerRef, revealRef)
+  useRevealUpdate(mdData, slidesRef, activeSlideIndex, revealRef)
+
+  console.log('after init')
   return (
     <div className='flex flex-col min-h-[500px]'>
       <style>{layoutStyleString}</style>
@@ -27,13 +32,14 @@ export default function MarkdownSlides() {
         </p>
       </div>
 
-      {!containerRef ? (
+      {/* {loading ? (
         <div>Loading...</div>
-      ) : (
-        <div className='flex-1 reveal !cursor-auto' ref={containerRef}>
-          <div className='slides' ref={slidesRef} />
-        </div>
-      )}
+      ) : ( */}
+      {/* // <div className='flex-1 reveal !cursor-auto' ref={containerRef}>
+        //   <div className='slides' ref={slidesRef} />
+        // </div> */}
+      <SlideViewer containerRef={containerRef} slidesRef={slidesRef} />
+      {/* )} */}
     </div>
   )
 }
