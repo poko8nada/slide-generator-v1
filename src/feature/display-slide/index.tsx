@@ -15,8 +15,6 @@ export default function MarkdownSlides() {
   const slidesRef = useRef<HTMLDivElement | null>(null) // .slides要素
   const { containerRef } = useSlideContainer()
 
-  console.log(containerRef)
-
   useReveal(containerRef, mdData, slidesRef, activeSlideIndex)
 
   return (

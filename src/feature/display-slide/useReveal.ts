@@ -87,7 +87,10 @@ export function useReveal(
     const init = async () => {
       try {
         if (!containerRef.current) return
+
         const Reveal = (await import('reveal.js')).default
+
+        console.log('Reveal.js initialized.')
 
         revealRef.current = new Reveal(containerRef.current, {
           embedded: true,

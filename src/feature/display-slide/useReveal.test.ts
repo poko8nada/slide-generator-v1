@@ -73,14 +73,6 @@ describe('useReveal', () => {
 
     rerender({ data: newMdData })
 
-    console.log(
-      'mockReveal.sync call count:',
-      mockReveal.sync.mock.calls.length,
-    )
-    console.log(
-      'mockReveal.layout call count:',
-      mockReveal.layout.mock.calls.length,
-    )
     expect(mockReveal.sync).toHaveBeenCalled()
     expect(mockReveal.layout).toHaveBeenCalled()
   })
