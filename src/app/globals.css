@@ -505,6 +505,30 @@
   padding: .75em;
 }
 
+/* CodeMirror custom height */
 .CodeMirror-scroll {
   height: 300px !important;
+}
+
+@media (min-width: 768px) {
+  .CodeMirror-scroll {
+    height: 300px !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .CodeMirror-scroll {
+    height: 355px !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .CodeMirror-scroll {
+    height: 380px !important;
+  }
+}
+
+.editor-statusbar {
+  display: none;
+  visibility: hidden;
 }

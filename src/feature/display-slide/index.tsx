@@ -28,11 +28,12 @@ export default function MarkdownSlides() {
       {/* <style>{layoutStyleString}</style> */}
       <div
         className={cn(
-          'relative m-auto',
-          'h-[360px] min-w-[420px] max-w-[700px]',
+          'relative m-2',
+          'min-w-[420px] max-w-[720px] w-full',
+          'h-[360px]',
           'sm:h-[400px]',
           'lg:h-[425px]',
-          'xl:w-[600px]',
+          'xl:h-[450px]',
         )}
       >
         {loading && <Loader />}

@@ -61,7 +61,15 @@ export default function EditMarkdown() {
   )
 
   return (
-    <div className={cn('relative m-auto', 'min-h-[425px] max-w-[700px]')}>
+    <div
+      className={cn(
+        'relative w-full m-2',
+        'max-w-[720px]',
+        'min-h-[371px]',
+        'lg:h-[425px]',
+        'xl:h-[450px]',
+      )}
+    >
       <MarkdownEditor
         mdData={mdData}
         setMdData={setMdData}

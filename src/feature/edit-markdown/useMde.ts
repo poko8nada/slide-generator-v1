@@ -37,8 +37,6 @@ export default function useMde(
       cm.on('cursorActivity', updateActiveSlide)
       cm.on('change', updateActiveSlide)
 
-      // cm.setSize('100%', '700px') // 高さを360pxに設定
-
       // 初期スライドインデックスを設定
       updateActiveSlide()
     } catch (error) {

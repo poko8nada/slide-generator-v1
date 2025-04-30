@@ -19,9 +19,9 @@ export default function DashboardLayout({
             <h1>Dashboard Layout</h1>
           </header>
           <div>{children}</div>
-          <main className='flex lg:flex-row flex-col gap-1'>
-            <div className='p-1 w-full'>{markdown}</div>
-            <div className='p-1 w-full'>{slide}</div>
+          <main className='flex lg:flex-row flex-col justify-center items-center gap-1 p-2'>
+            {markdown}
+            {slide}
           </main>
         </div>
       </SlideContainerProvider>
