@@ -121,6 +121,15 @@
   }
 }
 
+.reveal.center .slides section p:has(img) {
+  overflow: hidden !important;
+}
+.reveal.center .slides section p img {
+  width: auto !important;
+  margin: 0 auto !important;
+  object-fit: contain !important;
+}
+
 /* 以下はrevealからの流用と一部改定 */
 .reveal-print {
   height: 100%;
@@ -251,7 +260,7 @@
   display: none;
 }
 
-@media print {
+/* @media print {
   html:not(.print-pdf) {
     height: auto;
     overflow: visible;
@@ -437,16 +446,15 @@
     color: inherit !important;
     font-size: inherit !important;
   }
-}
+} */
 
 .reveal-print .reveal .slides .pdf-page {
-  min-width: 360px;
-  height: 270px;
+  width: 400px;
+  height: 300px;
   margin: auto;
 }
 
 .reveal-print .reveal .slides section {
-  width: 86%;
   top: 0;
   left: 0;
   right: 0;

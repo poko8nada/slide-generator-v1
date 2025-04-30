@@ -65,9 +65,8 @@ const updateSlides = (
   requestAnimationFrame(() => {
     if (!revealRef.current) return
     try {
-      revealRef.current.sync() // スライド構造を更新
-      revealRef.current.layout() // スライド表示を再計算
-      // アクティブスライドを強制設定
+      revealRef.current.sync()
+      revealRef.current.layout()
       revealRef.current.slide(activeSlideIndex, 0)
     } catch (error) {
       console.error('Reveal.js update error:', error)
@@ -75,12 +74,60 @@ const updateSlides = (
   })
 }
 
+const fixImageHeight = (
+  slidesRef: RefObject<HTMLDivElement | null>,
+  styleRef: RefObject<HTMLStyleElement | null>,
+) => {
+  const sections = slidesRef.current?.querySelectorAll('section')
+  const heightStyles = sections
+    ? Array.from(sections).map((section, index) => {
+        section.removeAttribute('style')
+        section.removeAttribute('class')
+        section.removeAttribute('hidden')
+        section.style.display = 'block'
+        const images = section.querySelectorAll('img')
+        console.log(images)
+
+        if (images.length === 0) return
+
+        section.classList.add(`section_${index}`)
+
+        const usedHeight = Array.from(section.children)
+          .filter(child => {
+            return child.querySelectorAll('img').length === 0
+          })
+          .reduce((previousValue: number, currentValue: Element) => {
+            const element = currentValue as HTMLElement
+            return (
+              previousValue + Math.ceil(element.getBoundingClientRect().height)
+            )
+          }, 0)
+
+        const slideHeight =
+          slidesRef.current?.getBoundingClientRect().height ?? 0
+        const imgHeight = Math.floor((slideHeight - usedHeight) / images.length)
+        const pdfImgHeight = Math.floor(
+          (imgHeight * (150 / slideHeight)) / images.length,
+        )
+
+        return `.section_${index} img{height: ${imgHeight}px;} .pdf-page .section_${index} img{height: ${pdfImgHeight}px;}`
+      })
+    : []
+  styleRef.current = document.querySelector('main .original_reveal_slide style')
+
+  if (styleRef.current) {
+    styleRef.current.innerHTML = heightStyles.join('')
+  }
+}
+
 export function useRevealInit(
   mdData: string,
   slidesRef: RefObject<HTMLDivElement | null>,
+  activeSlideIndex: number,
   containerRef: RefObject<HTMLDivElement | null>,
   revealRef: RefObject<Reveal.Api | null>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  styleRef: RefObject<HTMLStyleElement | null>,
 ) {
   // refはuseEffectの依存配列に含めなくてよい
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -107,6 +154,9 @@ export function useRevealInit(
         setSlide(slides, slidesRef, revealRef, 0)
 
         await revealRef.current.initialize()
+
+        fixImageHeight(slidesRef, styleRef)
+        updateSlides(activeSlideIndex, revealRef)
 
         console.log('Reveal.js initialized.')
         setLoading(false)
@@ -136,6 +186,7 @@ export function useRevealUpdate(
   slidesRef: RefObject<HTMLDivElement | null>,
   activeSlideIndex: number,
   revealRef: RefObject<Reveal.Api | null>,
+  styleRef: RefObject<HTMLStyleElement | null>,
 ) {
   // refはuseEffectの依存配列に含めなくてよい
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -146,6 +197,7 @@ export function useRevealUpdate(
       try {
         const slides = await getSlides(mdData)
         setSlide(slides, slidesRef, revealRef, 0)
+        fixImageHeight(slidesRef, styleRef)
         updateSlides(activeSlideIndex, revealRef)
       } catch (error) {
         throw new Error(`Slide update error: ${error}`)

@@ -4,6 +4,7 @@ import { type ReactNode, createContext, useContext, useState } from 'react'
 const initialMdData = `
 # Slide 1
 ## 変数の定義
+![](https://placehold.jp/150x700.png)
 
 \`\`\`js
 let a = 1;

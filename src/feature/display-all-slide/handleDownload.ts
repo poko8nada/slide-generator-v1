@@ -9,6 +9,7 @@ export async function handleDownload(
   if (!isOpen || !containerRef.current) return
 
   setIsLoading(true)
+
   const revealViewPort = document.querySelector(
     '.reveal-viewport',
   ) as HTMLElement
@@ -25,6 +26,7 @@ export async function handleDownload(
     slides[0].offsetWidth * scale,
     slides[0].offsetHeight * scale,
   ]
+
   const pdf = new jsPDF({
     orientation: 'landscape',
     unit: 'px',

@@ -10,32 +10,42 @@ import SlideViewer from '@/components/slide-viewer'
 import { cn } from '@/lib/utils'
 import { useSlide } from '@/providers/slide-container-provider'
 
-export default function MarkdownSlides() {
+export default function DisplaySlide() {
   const { mdData, activeSlideIndex } = useMdData()
   const { containerRef } = useSlide()
   const revealRef = useRef<Reveal.Api | null>(null)
   const slidesRef = useRef<HTMLDivElement | null>(null)
+  const styleRef = useRef<HTMLStyleElement | null>(null)
 
   const [loading, setLoading] = useState(true)
-  console.log('before init')
 
-  useRevealInit(mdData, slidesRef, containerRef, revealRef, setLoading)
-  useRevealUpdate(mdData, slidesRef, activeSlideIndex, revealRef)
+  useRevealInit(
+    mdData,
+    slidesRef,
+    activeSlideIndex,
+    containerRef,
+    revealRef,
+    setLoading,
+    styleRef,
+  )
+  useRevealUpdate(mdData, slidesRef, activeSlideIndex, revealRef, styleRef)
 
-  console.log('after init')
   return (
     <>
       {/* <style>{layoutStyleString}</style> */}
+
       <div
         className={cn(
+          'original_reveal_slide',
           'relative m-2',
-          'min-w-[420px] max-w-[720px] w-full',
+          'min-w-[420px] max-w-[640px] w-full',
           'h-[360px]',
           'sm:h-[400px]',
           'lg:h-[425px]',
           'xl:h-[450px]',
         )}
       >
+        <style />
         {loading && <Loader />}
         <SlideViewer containerRef={containerRef} slidesRef={slidesRef} />
       </div>

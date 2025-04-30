@@ -64,7 +64,7 @@ export default function EditMarkdown() {
     <div
       className={cn(
         'relative w-full m-2',
-        'max-w-[720px]',
+        'max-w-[640px]',
         'min-h-[371px]',
         'lg:h-[425px]',
         'xl:h-[450px]',

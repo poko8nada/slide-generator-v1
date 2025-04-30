@@ -18,12 +18,12 @@ export default function SlideSheet({
   return (
     <Sheet
       onOpenChange={(open: boolean) => setIsOpen(open)}
-      className='overflow-y-scroll !min-w-[360px]'
+      // className='overflow-y-scroll'
     >
       <SheetTrigger asChild>
         <Button variant='default'>Open Sheet</Button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent className='!w-full !max-w-[420px] sm:!max-w-[420px]'>
         <SheetHeader>
           <SheetTitle>Are you absolutely sure?</SheetTitle>
         </SheetHeader>

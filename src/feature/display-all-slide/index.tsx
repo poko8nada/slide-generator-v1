@@ -20,7 +20,7 @@ export default function DisplayAllSlide() {
     <>
       <SlideSheet setIsOpen={setIsOpen}>
         {snap ? (
-          <div className='!h-[85%] overflow-y-scroll reveal-print'>
+          <div className='overflow-y-scroll reveal-print'>
             {parse(snap.outerHTML)}
           </div>
         ) : null}
