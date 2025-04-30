@@ -22,15 +22,13 @@ export default function MarkdownEditor({
   mdeRef: React.RefObject<{ getMdeInstance: () => EasyMDE } | null>
 }) {
   return (
-    <div className='relative min-h-[400px]'>
-      <SimpleMDE
-        value={mdData}
-        onChange={setMdData}
-        options={options}
-        getMdeInstance={instance => {
-          mdeRef.current = { getMdeInstance: () => instance }
-        }}
-      />
-    </div>
+    <SimpleMDE
+      value={mdData}
+      onChange={setMdData}
+      options={options}
+      getMdeInstance={instance => {
+        mdeRef.current = { getMdeInstance: () => instance }
+      }}
+    />
   )
 }

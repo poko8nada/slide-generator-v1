@@ -3,11 +3,11 @@ import { useMdData } from '@/providers/md-data-provider'
 import { useRef, useState } from 'react'
 import 'reveal.js/dist/reveal.css'
 import 'reveal.js/dist/theme/black.css'
-import { layoutStyleString } from './custom-layout-style'
 import { useRevealInit, useRevealUpdate } from './useReveal'
 import 'highlight.js/styles/monokai.min.css'
 import Loader from '@/components/loader'
 import SlideViewer from '@/components/slide-viewer'
+import { cn } from '@/lib/utils'
 import { useSlide } from '@/providers/slide-container-provider'
 
 export default function MarkdownSlides() {
@@ -24,14 +24,20 @@ export default function MarkdownSlides() {
 
   console.log('after init')
   return (
-    <div className='container'>
-      <style>{layoutStyleString}</style>
-
-      <div className='relative h-[400px]'>
+    <>
+      {/* <style>{layoutStyleString}</style> */}
+      <div
+        className={cn(
+          'relative m-auto',
+          'h-[360px] min-w-[420px] max-w-[700px]',
+          'sm:h-[400px]',
+          'lg:h-[425px]',
+          'xl:w-[600px]',
+        )}
+      >
         {loading && <Loader />}
         <SlideViewer containerRef={containerRef} slidesRef={slidesRef} />
-        {/* )} */}
       </div>
-    </div>
+    </>
   )
 }

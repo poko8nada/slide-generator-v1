@@ -1,5 +1,6 @@
 'use client'
 import MarkdownEditor from '@/components/markdown-editor'
+import { cn } from '@/lib/utils'
 import { useMdData } from '@/providers/md-data-provider'
 import { useMemo, useRef } from 'react'
 import type { SimpleMDEReactProps } from 'react-simplemde-editor'
@@ -60,7 +61,7 @@ export default function EditMarkdown() {
   )
 
   return (
-    <div className='container'>
+    <div className={cn('relative m-auto', 'min-h-[425px] max-w-[700px]')}>
       <MarkdownEditor
         mdData={mdData}
         setMdData={setMdData}
