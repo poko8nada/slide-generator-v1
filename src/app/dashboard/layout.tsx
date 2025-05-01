@@ -14,15 +14,15 @@ export default function DashboardLayout({
   return (
     <MdDataProvider>
       <SlideContainerProvider>
-        <div>
+        <main>
+          <div className='flex lg:flex-row flex-col justify-center items-center gap-1 p-2'>
+            {markdown}
+            {slide}
+          </div>
           <div className='mx-auto flex max-w-screen-xl items-center justify-end px-4 sm:px-6 lg:px-8'>
             {children}
           </div>
-          <main className='flex lg:flex-row flex-col justify-center items-center gap-1 p-2'>
-            {markdown}
-            {slide}
-          </main>
-        </div>
+        </main>
       </SlideContainerProvider>
     </MdDataProvider>
   )

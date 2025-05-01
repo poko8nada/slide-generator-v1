@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 
 function formatSnapContent(prev: HTMLDivElement | null): HTMLDivElement | null {
-  if (!prev) {
-    return null
-  }
+  if (!prev) return null
+
   if (prev) {
     const slides = prev.querySelector('.slides')
     if (!slides) return prev
@@ -44,6 +43,8 @@ export function useCustomSnap(
 ) {
   const [snap, setSnap] = useState<HTMLDivElement | null>(null)
 
+  // refはuseEffectの依存配列に含めなくてよい
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (!containerRef.current) {
       setSnap(null)
@@ -53,7 +54,7 @@ export function useCustomSnap(
       setSnap(containerRef.current.cloneNode(true) as HTMLDivElement)
     }
     setSnap(prev => formatSnapContent(prev))
-  }, [isOpen, containerRef])
+  }, [isOpen])
 
   return snap
 }

@@ -1,8 +1,7 @@
 import type React from 'react'
 import { type ReactNode, createContext, useContext, useState } from 'react'
 
-const initialMdData = `
-# Slide 1
+const initialMdData = `# Slide 1
 ## 変数の定義
 ![](https://placehold.jp/150x700.png)
 
