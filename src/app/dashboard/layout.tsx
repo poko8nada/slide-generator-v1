@@ -1,4 +1,6 @@
 'use client'
+import GeneralHeader from '@/components/general-header'
+import ControlUserAction from '@/feature/control-user-action'
 import { MdDataProvider } from '@/providers/md-data-provider'
 import { SlideContainerProvider } from '@/providers/slide-container-provider'
 
@@ -14,6 +16,9 @@ export default function DashboardLayout({
   return (
     <MdDataProvider>
       <SlideContainerProvider>
+        <GeneralHeader>
+          <ControlUserAction />
+        </GeneralHeader>
         <main>
           <div className='flex lg:flex-row flex-col justify-center items-center gap-1 p-2'>
             {markdown}

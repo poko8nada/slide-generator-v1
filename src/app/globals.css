@@ -268,10 +268,6 @@
   padding: .75em;
 }
 
-.reveal-print .reveal li {
-  text-indent: -.5em;
-}
-
 /* その他の印刷用調整 */
 .reveal-print .reveal pre code {
   overflow: hidden !important;
