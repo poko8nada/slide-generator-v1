@@ -29,7 +29,6 @@ export default function DisplaySlide() {
     styleRef,
   )
   useRevealUpdate(mdData, slidesRef, activeSlideIndex, revealRef, styleRef)
-
   return (
     <>
       {/* <style>{layoutStyleString}</style> */}

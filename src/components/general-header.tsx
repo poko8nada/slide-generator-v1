@@ -75,7 +75,7 @@ export default function GeneralHeader() {
               log in
             </Button>
             <span className='text-xs tracking-tight text-muted-foreground'>
-              unlock in beta
+              unlock in 1.0.0
             </span>
           </div>
           {/* </div> */}
