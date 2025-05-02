@@ -1,60 +1,70 @@
 import { useEffect, useState } from 'react'
 
-function formatSnapContent(prev: HTMLDivElement | null): HTMLDivElement | null {
-  if (!prev) return null
+function formatSnapContent(
+  container: HTMLDivElement | null,
+): HTMLDivElement | null {
+  if (!container) return null
 
-  if (prev) {
-    const slides = prev.querySelector('.slides')
-    if (!slides) return prev
-    slides.removeAttribute('style')
-    slides.removeAttribute('class')
-    slides.classList.add('slides')
+  container.removeAttribute('style')
+  container.removeAttribute('class')
+  container.classList.add('reveal', 'center')
 
-    const sections = prev.querySelectorAll('section')
-    if (!sections) return prev
+  const slides = container.querySelector('.slides')
+  if (!slides) return container
+  slides.removeAttribute('style')
+  slides.removeAttribute('class')
+  slides.classList.add('slides')
 
-    const background = (child: string) => {
-      return `
-      <div class="pdf-page">
-      ${child}
-      <div class="slide-background present" data-loaded="true" style="display: block;"><div class="slide-background-content"></div></div>
-      </div>
-      `
-    }
+  const sections = container.querySelectorAll('section')
+  if (!sections) return container
 
-    let formattedSections = ''
-    for (const section of sections) {
-      section.removeAttribute('style')
-      section.removeAttribute('hidden')
-      formattedSections += background(section.outerHTML)
-    }
-    slides.innerHTML = formattedSections
-
-    const backgrounds = prev.querySelector('.backgrounds')
-    if (!backgrounds) return prev
-    backgrounds.innerHTML = ''
+  const background = (child: string) => {
+    return `
+    <div class="pdf-page" style="background:var(--r-background-color);">
+    ${child}
+    <div class="slide-background present" data-loaded="true" style="display: block;"><div class="slide-background-content"></div></div>
+    </div>
+    `
   }
-  return prev
+
+  let formattedSections = ''
+  for (const section of sections) {
+    section.removeAttribute('style')
+    section.removeAttribute('hidden')
+    formattedSections += background(section.outerHTML)
+  }
+  slides.innerHTML = formattedSections
+
+  const backgrounds = container.querySelector('.backgrounds')
+  if (!backgrounds) return container
+  backgrounds.innerHTML = ''
+
+  return container
 }
 
 export function useCustomSnap(
-  isOpen: boolean,
-  containerRef: React.RefObject<HTMLDivElement>,
+  mdData: string,
+  containerRef: React.RefObject<HTMLDivElement | null>,
+  setSnap: React.Dispatch<React.SetStateAction<HTMLDivElement | null>>,
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
-  const [snap, setSnap] = useState<HTMLDivElement | null>(null)
+  const [snapMdData, setSnapMdData] = useState('')
 
   // refはuseEffectの依存配列に含めなくてよい
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (!containerRef.current) {
-      setSnap(null)
-      return
-    }
-    if (isOpen) {
-      setSnap(containerRef.current.cloneNode(true) as HTMLDivElement)
-    }
-    setSnap(prev => formatSnapContent(prev))
-  }, [isOpen])
+    const container = containerRef.current
+    if (!container || mdData === snapMdData) return
 
-  return snap
+    const timer = setTimeout(() => {
+      const snapHtml = formatSnapContent(
+        container.cloneNode(true) as HTMLDivElement,
+      )
+      setSnap(snapHtml)
+      setIsLoading(false)
+      setSnapMdData(mdData)
+    }, 1500) // debounce
+
+    return () => clearTimeout(timer)
+  }, [mdData, setSnap, snapMdData])
 }

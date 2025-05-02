@@ -19,9 +19,7 @@ export default function DashboardLayout({
             {markdown}
             {slide}
           </div>
-          <div className='mx-auto flex max-w-screen-xl items-center justify-end px-4 sm:px-6 lg:px-8'>
-            {children}
-          </div>
+          <div className='p-2 lg:p-4'>{children}</div>
         </main>
       </SlideContainerProvider>
     </MdDataProvider>

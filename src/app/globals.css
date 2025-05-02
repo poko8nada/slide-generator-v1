@@ -129,6 +129,16 @@
   object-fit: contain;
 }
 
+:root {
+  /* baseは4:3 */
+  --reveal-base-width: 400px;
+  --reveal-custom-width: 204px;
+  --reveal-custom-height: 153px;
+  --reveal-custom-up-scale: calc(400 / 204);
+  --reveal-custom-down-scale: calc(204 / 400);
+  --reveal-custom-left: calc(-400px * (1 - 204 / 400) / 2);
+}
+
 .reveal-print {
   height: 100%;
   width: 100%;
@@ -157,7 +167,10 @@
   width: 100% !important;
   zoom: 1 !important;
   display: grid;
-  grid-template-columns: repeat(auto-fit, calc(150px + 1.5rem * 2));
+  grid-template-columns: repeat(
+      auto-fit,
+      calc(var(--reveal-custom-height) + 1.5rem * 2)
+    );
   justify-content: center; /* 全体を中央に */
   align-content: start;
   gap: 1rem;
@@ -172,15 +185,6 @@
 }
 
 /* .pdf-page サイズ・共通化 */
-:root {
-  /* baseは4:3 */
-  --reveal-base-width: 400px;
-  --reveal-custom-width: 200px;
-  --reveal-custom-height: 150px;
-  --reveal-custom-up-scale: calc(400 / 200);
-  --reveal-custom-down-scale: calc(200 / 400);
-  --reveal-custom-left: calc(-400px * (1 - 200 / 400) / 2);
-}
 .reveal-print .reveal .slides .pdf-page {
   width: var(--reveal-custom-width);
   height: var(--reveal-custom-height);
@@ -207,7 +211,7 @@
   right: 0;
   bottom: 0;
   height: fit-content !important;
-  width: 94%;
+  width: 90%;
   transform: translateY(-50%);
   transform-style: flat !important;
   visibility: visible !important;
@@ -218,19 +222,19 @@
 .reveal-print .reveal .slides section h2,
 .reveal-print .reveal .slides section h3,
 .reveal-print .reveal .slides section h4 {
-  margin-bottom: .3em !important;
+  margin-bottom: .3rem !important;
 }
 .reveal-print .reveal .slides section h1 {
-  font-size: calc(2.2rem * var(--reveal-custom-down-scale)) !important;
+  font-size: calc(2.4rem * var(--reveal-custom-down-scale)) !important;
 }
 .reveal-print .reveal .slides section h2 {
-  font-size: calc(1.4rem * var(--reveal-custom-down-scale)) !important;
+  font-size: calc(1.5rem * var(--reveal-custom-down-scale)) !important;
 }
 .reveal-print .reveal .slides section h3 {
-  font-size: calc(1.2rem * var(--reveal-custom-down-scale)) !important;
+  font-size: calc(1.3rem * var(--reveal-custom-down-scale)) !important;
 }
 .reveal-print .reveal .slides section h4 {
-  font-size: calc(1rem * var(--reveal-custom-down-scale)) !important;
+  font-size: calc(1.1rem * var(--reveal-custom-down-scale)) !important;
 }
 
 /* テキスト系のフォントサイズ */
@@ -242,18 +246,15 @@
 .reveal-print .reveal .slides section strong,
 .reveal-print .reveal .slides section em,
 .reveal-print .reveal .slides section td {
-  font-size: calc(.9rem * var(--reveal-custom-down-scale)) !important;
+  font-size: calc(1rem * var(--reveal-custom-down-scale)) !important;
 }
 
 /* p, pre のマージン共通化 */
 .reveal-print .reveal .slides section p,
-.reveal-print .reveal .slides section pre {
-  margin: .3em 0 !important;
-}
-
-/* pre:has(code) の中央寄せ */
+.reveal-print .reveal .slides section pre,
+.reveal-print .reveal .slides blockquote,
 .reveal-print .reveal .slides section pre:has(code) {
-  margin: auto !important;
+  margin: .4em auto !important;
 }
 
 /* code, code span の共通化 */
@@ -266,6 +267,11 @@
 .reveal-print .reveal .slides section code {
   padding: .75em;
 }
+
+.reveal-print .reveal li {
+  text-indent: -.5em;
+}
+
 /* その他の印刷用調整 */
 .reveal-print .reveal pre code {
   overflow: hidden !important;
@@ -329,6 +335,7 @@
   --codemirror-height-lg: 380px;
 }
 .CodeMirror-scroll {
+  overscroll-behavior-y: contain;
   height: var(--codemirror-height-sm) !important;
 }
 @media (min-width: 1024px) {
