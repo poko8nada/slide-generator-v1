@@ -1,4 +1,4 @@
-// app/api/image-proxy/route.ts
+import { isAllowedHost } from '@/lib/white-list'
 import { type NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest) {
@@ -7,8 +7,26 @@ export async function GET(req: NextRequest) {
     return new NextResponse('Missing url', { status: 400 })
   }
 
+  // Check if the URL starts with 'blob:' or 'data:'
   if (url.startsWith('blob:') || url.startsWith('data:')) {
     return new NextResponse('Unsupported URL scheme', { status: 400 })
+  }
+
+  // Check if the hostname is allowed
+  let hostname: string
+  try {
+    console.log(new URL(url))
+
+    const parsedUrl = new URL(url)
+    console.log('Parsed URL:', parsedUrl)
+
+    hostname = parsedUrl.hostname
+  } catch {
+    return new NextResponse('Invalid URL', { status: 400 })
+  }
+
+  if (!isAllowedHost(hostname)) {
+    return new NextResponse('Blocked by whitelist', { status: 403 })
   }
 
   try {
@@ -22,6 +40,8 @@ export async function GET(req: NextRequest) {
       'image/gif' ||
       'image/bmp'
     const buffer = await response.arrayBuffer()
+
+    console.log('Content-Type:', contentType)
 
     return new NextResponse(Buffer.from(buffer), {
       status: 200,

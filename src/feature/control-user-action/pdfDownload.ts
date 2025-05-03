@@ -42,7 +42,8 @@ export async function pdfDownload(
         continue // スキップ
       }
       const externalUrl = encodeURIComponent(image.src)
-      image.src = `/api/image-proxy?url=${externalUrl}`
+      const proxyUrl = `${externalUrl}&t=${Date.now()}`
+      image.src = `/api/image-proxy?url=${proxyUrl}`
     }
     try {
       const data = await toJpeg(slide, {
