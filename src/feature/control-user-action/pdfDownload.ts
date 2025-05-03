@@ -1,11 +1,7 @@
 import { toJpeg } from 'html-to-image'
 import jsPDF from 'jspdf'
 
-export async function pdfDownload(
-  containerRef: React.RefObject<HTMLDivElement | null>,
-) {
-  if (!containerRef.current) return
-
+function createCloneSlides() {
   const containerClone = document
     .querySelector('.reveal-print')
     ?.cloneNode(true) as HTMLDivElement
@@ -22,6 +18,59 @@ export async function pdfDownload(
     '.pdf-page',
   ) as NodeListOf<HTMLDivElement>
 
+  return { slides, containerClone }
+}
+
+function imgProxy(slide: HTMLDivElement) {
+  const images = slide.querySelectorAll('img')
+  for (const image of images) {
+    const src = image.src
+    if (src.startsWith('blob:') || src.startsWith('data:')) {
+      continue // スキップ
+    }
+    const externalUrl = encodeURIComponent(image.src)
+    const proxyUrl = `${externalUrl}&t=${Date.now()}`
+    image.src = `/api/image-proxy?url=${proxyUrl}`
+  }
+}
+
+function customListStyle(slide: HTMLDivElement) {
+  // li要素のテキストノードを処理して半角カンマを含む部分をspanでラップ
+  // カンマが入っている場合、改行されて次行と重なる可能性があるため
+  const liElements = slide.querySelectorAll('li')
+  for (const li of liElements) {
+    const textNodes = Array.from(li.childNodes).filter(
+      node => node.nodeType === Node.TEXT_NODE,
+    )
+    for (const textNode of textNodes) {
+      const text = textNode?.nodeValue
+      if (text?.includes(',')) {
+        const parts = text.split(',')
+        const fragment = document.createDocumentFragment()
+        for (const [index, part] of parts.entries()) {
+          const span = document.createElement('span')
+          span.textContent = part
+          if (index < parts.length - 1) {
+            span.classList.add('nowrap-comma')
+            fragment.appendChild(span)
+            const comma = document.createTextNode(',')
+            fragment.appendChild(comma)
+          } else {
+            fragment.appendChild(span)
+          }
+        }
+        li.replaceChild(fragment, textNode)
+      }
+    }
+  }
+}
+
+export async function pdfDownload() {
+  const { slides, containerClone } = createCloneSlides()
+  if (slides.length === 0) {
+    return
+  }
+
   const scale = 4.0
   const formatSize = [
     slides[0].offsetWidth * scale,
@@ -35,43 +84,9 @@ export async function pdfDownload(
   })
 
   for (const [index, slide] of slides.entries()) {
-    const images = slide.querySelectorAll('img')
-    for (const image of images) {
-      const src = image.src
-      if (src.startsWith('blob:') || src.startsWith('data:')) {
-        continue // スキップ
-      }
-      const externalUrl = encodeURIComponent(image.src)
-      const proxyUrl = `${externalUrl}&t=${Date.now()}`
-      image.src = `/api/image-proxy?url=${proxyUrl}`
-    }
-    // li要素のテキストノードを処理して半角カンマを含む部分をspanでラップ
-    const liElements = slide.querySelectorAll('li')
-    for (const li of liElements) {
-      const textNodes = Array.from(li.childNodes).filter(
-        node => node.nodeType === Node.TEXT_NODE,
-      )
-      for (const textNode of textNodes) {
-        const text = textNode?.nodeValue
-        if (text?.includes(',')) {
-          const parts = text.split(',')
-          const fragment = document.createDocumentFragment()
-          for (const [index, part] of parts.entries()) {
-            const span = document.createElement('span')
-            span.textContent = part
-            if (index < parts.length - 1) {
-              span.classList.add('nowrap-comma')
-              fragment.appendChild(span)
-              const comma = document.createTextNode(',')
-              fragment.appendChild(comma)
-            } else {
-              fragment.appendChild(span)
-            }
-          }
-          li.replaceChild(fragment, textNode)
-        }
-      }
-    }
+    imgProxy(slide)
+    customListStyle(slide)
+
     try {
       const data = await toJpeg(slide, {
         quality: 1,
