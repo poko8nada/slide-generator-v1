@@ -7,6 +7,7 @@ export default function CustomButton({
   isLoading,
   variant,
   icon,
+  disabled,
 }: {
   onClick: () => Promise<void>
   children: React.ReactNode
@@ -21,9 +22,14 @@ export default function CustomButton({
     | null
     | undefined
   icon?: React.ReactNode
+  disabled?: boolean
 }) {
   return (
-    <Button onClick={onClick} disabled={isLoading} variant={variant}>
+    <Button
+      onClick={onClick}
+      disabled={isLoading || disabled}
+      variant={variant}
+    >
       {isLoading ? <LoaderCircle className='animate-spin' /> : icon}
       {children}
     </Button>

@@ -3,6 +3,7 @@ import GeneralHeader from '@/components/general-header'
 import ControlUserAction from '@/feature/control-user-action'
 import { MdDataProvider } from '@/providers/md-data-provider'
 import { SlideContainerProvider } from '@/providers/slide-container-provider'
+import { SlideSnapProvider } from '@/providers/slide-snap-provider'
 
 export default function DashboardLayout({
   children,
@@ -14,19 +15,21 @@ export default function DashboardLayout({
   slide: React.ReactNode
 }) {
   return (
-    <MdDataProvider>
-      <SlideContainerProvider>
-        <GeneralHeader>
-          <ControlUserAction />
-        </GeneralHeader>
-        <main>
-          <div className='flex lg:flex-row flex-col justify-center items-center gap-1 p-2'>
-            {markdown}
-            {slide}
-          </div>
-          <div className='p-2 lg:p-4'>{children}</div>
-        </main>
-      </SlideContainerProvider>
-    </MdDataProvider>
+    <SlideSnapProvider>
+      <MdDataProvider>
+        <SlideContainerProvider>
+          <GeneralHeader>
+            <ControlUserAction />
+          </GeneralHeader>
+          <main>
+            <div className='flex lg:flex-row flex-col justify-center items-center gap-1 p-2'>
+              {markdown}
+              {slide}
+            </div>
+            <div className='p-2 lg:p-4'>{children}</div>
+          </main>
+        </SlideContainerProvider>
+      </MdDataProvider>
+    </SlideSnapProvider>
   )
 }

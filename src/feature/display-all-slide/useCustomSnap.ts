@@ -45,7 +45,7 @@ function formatSnapContent(
 export function useCustomSnap(
   mdData: string,
   containerRef: React.RefObject<HTMLDivElement | null>,
-  setSnap: React.Dispatch<React.SetStateAction<HTMLDivElement | null>>,
+  setSlideSnap: React.Dispatch<React.SetStateAction<HTMLDivElement | null>>,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
   const [snapMdData, setSnapMdData] = useState('')
@@ -60,11 +60,11 @@ export function useCustomSnap(
       const snapHtml = formatSnapContent(
         container.cloneNode(true) as HTMLDivElement,
       )
-      setSnap(snapHtml)
+      setSlideSnap(snapHtml)
       setIsLoading(false)
       setSnapMdData(mdData)
     }, 1500) // debounce
 
     return () => clearTimeout(timer)
-  }, [mdData, setSnap, snapMdData])
+  }, [mdData, setSlideSnap, snapMdData])
 }

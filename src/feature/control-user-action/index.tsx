@@ -2,12 +2,13 @@
 import CustomButton from '@/components/custom-button'
 import { Button } from '@/components/ui/button'
 import { useSlide } from '@/providers/slide-container-provider'
+import { useSlideSnap } from '@/providers/slide-snap-provider'
 import { Download } from 'lucide-react'
 import { useState } from 'react'
 import { pdfDownload } from './pdfDownload'
-
 export default function ControlUserAction() {
   const { containerRef } = useSlide()
+  const { slideSnap } = useSlideSnap()
   const [isLoading, setIsLoading] = useState(false)
 
   const handleClick = async () => {
@@ -23,6 +24,7 @@ export default function ControlUserAction() {
         onClick={handleClick}
         variant={'outline'}
         icon={<Download />}
+        disabled={!slideSnap}
       >
         download as PDF
       </CustomButton>
