@@ -257,6 +257,11 @@
   margin: .4em auto !important;
 }
 
+/* 半角カンマ用のnowrapスタイル */
+.reveal-print .reveal .slides section .nowrap-comma {
+  white-space: nowrap;
+}
+
 /* code, code span の共通化 */
 .reveal-print .reveal .slides section code,
 .reveal-print .reveal .slides section code span {
@@ -272,6 +277,7 @@
 .reveal-print .reveal pre code {
   overflow: hidden !important;
 }
+
 .reveal-print .reveal section.stack {
   height: auto !important;
   margin: 0 !important;

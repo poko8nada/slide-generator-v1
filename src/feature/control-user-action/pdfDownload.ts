@@ -45,6 +45,33 @@ export async function pdfDownload(
       const proxyUrl = `${externalUrl}&t=${Date.now()}`
       image.src = `/api/image-proxy?url=${proxyUrl}`
     }
+    // li要素のテキストノードを処理して半角カンマを含む部分をspanでラップ
+    const liElements = slide.querySelectorAll('li')
+    for (const li of liElements) {
+      const textNodes = Array.from(li.childNodes).filter(
+        node => node.nodeType === Node.TEXT_NODE,
+      )
+      for (const textNode of textNodes) {
+        const text = textNode?.nodeValue
+        if (text?.includes(',')) {
+          const parts = text.split(',')
+          const fragment = document.createDocumentFragment()
+          for (const [index, part] of parts.entries()) {
+            const span = document.createElement('span')
+            span.textContent = part
+            if (index < parts.length - 1) {
+              span.classList.add('nowrap-comma')
+              fragment.appendChild(span)
+              const comma = document.createTextNode(',')
+              fragment.appendChild(comma)
+            } else {
+              fragment.appendChild(span)
+            }
+          }
+          li.replaceChild(fragment, textNode)
+        }
+      }
+    }
     try {
       const data = await toJpeg(slide, {
         quality: 1,
@@ -59,6 +86,11 @@ export async function pdfDownload(
         },
       })
 
+      // デバッグ用: JPEG画像を一時保存して確認
+      // const link = document.createElement('a')
+      // link.href = data
+      // link.download = `slide_${index + 1}.jpeg`
+      // link.click()
       // dataURLの詳細をコンソール出力
       // console.log(`Slide ${index + 1} dataURL length:`, data.length)
       // console.log(`Slide ${index + 1} dataURL prefix:`, data.substring(0, 50))
