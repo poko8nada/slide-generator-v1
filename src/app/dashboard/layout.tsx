@@ -27,10 +27,8 @@ export default function DashboardLayout({
               {markdown}
               {slide}
             </div>
-            <div>
-              <Divider title='Preview' className='mt-10 mb-2' />
-              <div className='p-2 lg:p-4'>{children}</div>
-            </div>
+            <Divider title='Preview' className='mt-10 mb-2' />
+            <div className='p-2 lg:p-4'>{children}</div>
           </main>
         </SlideContainerProvider>
       </MdDataProvider>
