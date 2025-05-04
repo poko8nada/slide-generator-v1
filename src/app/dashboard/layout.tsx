@@ -1,4 +1,5 @@
 'use client'
+import Divider from '@/components/divider'
 import GeneralHeader from '@/components/general-header'
 import ControlUserAction from '@/feature/control-user-action'
 import { MdDataProvider } from '@/providers/md-data-provider'
@@ -26,7 +27,10 @@ export default function DashboardLayout({
               {markdown}
               {slide}
             </div>
-            <div className='p-2 lg:p-4'>{children}</div>
+            <div>
+              <Divider title='Preview' className='mt-10 mb-2' />
+              <div className='p-2 lg:p-4'>{children}</div>
+            </div>
           </main>
         </SlideContainerProvider>
       </MdDataProvider>
