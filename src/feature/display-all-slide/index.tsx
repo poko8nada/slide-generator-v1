@@ -18,7 +18,7 @@ export default function DisplayAllSlide() {
 
   return (
     <>
-      <div className='relative reveal-print min-h-[200px] max-w-[640px] lg:max-w-[1300px] w-full mx-auto'>
+      <div className='relative min-h-[200px] max-w-[640px] lg:max-w-[1300px] w-full mx-auto'>
         {isLoading && <Loader />}
         {slideSnap && parse(slideSnap.outerHTML)}
       </div>

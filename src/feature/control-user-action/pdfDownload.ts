@@ -1,10 +1,8 @@
 import { toJpeg } from 'html-to-image'
 import jsPDF from 'jspdf'
 
-function createCloneSlides() {
-  const containerClone = document
-    .querySelector('.reveal-print')
-    ?.cloneNode(true) as HTMLDivElement
+function createCloneSlides(slideSnap: HTMLDivElement) {
+  const containerClone = slideSnap?.cloneNode(true) as HTMLDivElement
 
   if (containerClone) {
     // 一時的に document.body に追加
@@ -65,11 +63,9 @@ function customListStyle(slide: HTMLDivElement) {
   }
 }
 
-export async function pdfDownload() {
-  const { slides, containerClone } = createCloneSlides()
-  if (slides.length === 0) {
-    return
-  }
+export async function pdfDownload(slideSnap: HTMLDivElement) {
+  const { slides, containerClone } = createCloneSlides(slideSnap)
+  if (slides.length === 0) return
 
   const scale = 4.0
   const formatSize = [
@@ -101,12 +97,12 @@ export async function pdfDownload() {
         },
       })
 
-      // デバッグ用: JPEG画像を一時保存して確認
+      // // デバッグ用: JPEG画像を一時保存して確認
       // const link = document.createElement('a')
       // link.href = data
       // link.download = `slide_${index + 1}.jpeg`
       // link.click()
-      // dataURLの詳細をコンソール出力
+      // // dataURLの詳細をコンソール出力
       // console.log(`Slide ${index + 1} dataURL length:`, data.length)
       // console.log(`Slide ${index + 1} dataURL prefix:`, data.substring(0, 50))
 

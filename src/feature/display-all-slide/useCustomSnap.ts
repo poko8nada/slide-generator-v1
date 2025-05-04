@@ -9,6 +9,10 @@ function formatSnapContent(
   container.removeAttribute('class')
   container.classList.add('reveal', 'center')
 
+  const snapWrapper = document.createElement('div')
+  snapWrapper.classList.add('reveal-print')
+  snapWrapper.appendChild(container)
+
   const slides = container.querySelector('.slides')
   if (!slides) return container
   slides.removeAttribute('style')
@@ -39,7 +43,7 @@ function formatSnapContent(
   if (!backgrounds) return container
   backgrounds.innerHTML = ''
 
-  return container
+  return snapWrapper
 }
 
 export function useCustomSnap(
