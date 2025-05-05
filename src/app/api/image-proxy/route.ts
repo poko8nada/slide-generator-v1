@@ -15,10 +15,7 @@ export async function GET(req: NextRequest) {
   // Check if the hostname is allowed
   let hostname: string
   try {
-    console.log(new URL(url))
-
     const parsedUrl = new URL(url)
-    console.log('Parsed URL:', parsedUrl)
 
     hostname = parsedUrl.hostname
   } catch {
@@ -40,9 +37,7 @@ export async function GET(req: NextRequest) {
       'image/gif' ||
       'image/bmp'
     const buffer = await response.arrayBuffer()
-
-    console.log('Content-Type:', contentType)
-
+    s
     return new NextResponse(Buffer.from(buffer), {
       status: 200,
       headers: {

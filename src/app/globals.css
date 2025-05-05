@@ -41,6 +41,26 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --animate-toast: slide 4s ease !important;
+}
+
+@keyframes slide {
+  0% {
+    top: -180px;
+  }
+  20% {
+    /* transform: translateY(0px); */
+    top: 12px;
+  }
+  60% {
+    /* transform: translateY(0px); */
+    top: 12px;
+  }
+  100% {
+    /* transform: translateY(0px); */
+    top: 12px;
+    display: none;
+  }
 }
 
 :root {
