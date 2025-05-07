@@ -2,7 +2,7 @@ export default function GeneralHeader({
   children,
 }: { children?: React.ReactNode }) {
   return (
-    <header className='bg-white sticky top-0 z-50 border-b'>
+    <header className='bg-white border-b'>
       <div className='mx-auto flex h-18 max-w-screen-xl items-center justify-between gap-8 px-4 sm:px-6 lg:px-8'>
         <a className='flex items-center' href='/'>
           <span className='sr-only'>Home</span>

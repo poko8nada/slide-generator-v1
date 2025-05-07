@@ -36,7 +36,7 @@ export default function DisplaySlide() {
       <div
         className={cn(
           'original_reveal_slide',
-          'relative m-2',
+          'relative',
           'min-w-[420px] max-w-[640px] w-full',
           'h-[360px]',
           'sm:h-[400px]',
