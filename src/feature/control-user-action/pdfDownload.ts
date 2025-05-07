@@ -19,8 +19,10 @@ function createCloneSlides(slideSnap: HTMLDivElement) {
   return { slides, containerClone }
 }
 
-function imgProxy(slide: HTMLDivElement) {
+async function imgProxy(slide: HTMLDivElement) {
   const images = slide.querySelectorAll('img')
+  if (images.length === 0) return Promise.resolve({ ok: true })
+
   for (const image of images) {
     const src = image.src
     if (src.startsWith('blob:') || src.startsWith('data:')) {
@@ -28,7 +30,9 @@ function imgProxy(slide: HTMLDivElement) {
     }
     const externalUrl = encodeURIComponent(image.src)
     const proxyUrl = `${externalUrl}&t=${Date.now()}`
+
     image.src = `/api/image-proxy?url=${proxyUrl}`
+    return (await fetch(image.src)) || { ok: false }
   }
 }
 
@@ -80,10 +84,24 @@ export async function pdfDownload(slideSnap: HTMLDivElement) {
   })
 
   for (const [index, slide] of slides.entries()) {
-    imgProxy(slide)
-    customListStyle(slide)
+    const res = await imgProxy(slide)
 
     try {
+      if (!res || !res.ok) {
+        const errJson =
+          res instanceof Response
+            ? await res.json()
+            : { message: 'Unknown error' }
+        console.log(errJson)
+
+        throw new Error(
+          `Slide No ${index + 1}: Failed to fetch image "${
+            (errJson as { message: string }).message
+          }"`,
+        )
+      }
+
+      customListStyle(slide)
       const data = await toJpeg(slide, {
         quality: 1,
         width: formatSize[0],
@@ -108,8 +126,11 @@ export async function pdfDownload(slideSnap: HTMLDivElement) {
 
       pdf.addImage(data, 'JPEG', 0, 0, formatSize[0], formatSize[1])
       pdf.addPage()
-    } catch (_) {
-      console.log(index + 1, 'page failed')
+    } catch (err) {
+      if (err instanceof Error) {
+        return err
+      }
+      return new Error('Unknown error')
     }
   }
 
