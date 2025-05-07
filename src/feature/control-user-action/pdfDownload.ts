@@ -26,7 +26,7 @@ async function imgProxy(slide: HTMLDivElement) {
   for (const image of images) {
     const src = image.src
     if (src.startsWith('blob:') || src.startsWith('data:')) {
-      continue // スキップ
+      return Promise.resolve({ ok: true })
     }
     const externalUrl = encodeURIComponent(image.src)
     const proxyUrl = `${externalUrl}&t=${Date.now()}`
