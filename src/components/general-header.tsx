@@ -1,8 +1,8 @@
-import { Button } from './ui/button'
-
-export default function GeneralHeader() {
+export default function GeneralHeader({
+  children,
+}: { children?: React.ReactNode }) {
   return (
-    <header className='bg-white'>
+    <header className='bg-white border-b'>
       <div className='mx-auto flex h-18 max-w-screen-xl items-center justify-between gap-8 px-4 sm:px-6 lg:px-8'>
         <a className='flex items-center' href='/'>
           <span className='sr-only'>Home</span>
@@ -69,17 +69,7 @@ export default function GeneralHeader() {
             </ul>
           </nav> */}
 
-        <div className='flex items-center gap-4'>
-          <div className='flex flex-col items-center sm:gap-1'>
-            <Button disabled className='line-through'>
-              log in
-            </Button>
-            <span className='text-xs tracking-tight text-muted-foreground'>
-              unlock in beta
-            </span>
-          </div>
-          {/* </div> */}
-        </div>
+        {children}
       </div>
     </header>
   )

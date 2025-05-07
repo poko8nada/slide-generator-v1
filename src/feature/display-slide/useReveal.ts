@@ -3,7 +3,7 @@ import hljs from 'highlight.js'
 import { type RefObject, useEffect } from 'react'
 import type Reveal from 'reveal.js'
 
-const getSlides = (md: string) => {
+function getSlides(md: string): Promise<string[]> {
   // Markdownをスライドに分割 (3本のハイフンのみを対象)
   const slides = md.split(/(?<=\n|^)---(?=\n|$)/).map(content => content.trim())
 
@@ -16,12 +16,12 @@ const getSlides = (md: string) => {
   return slides.length > 0 ? htmlSlides : Promise.resolve([''])
 }
 
-const setSlide = (
+function setSlides(
   slides: string[],
   slidesRef: RefObject<HTMLDivElement | null>,
   revealRef: RefObject<Reveal.Api | null>,
   activeSlideIndex: number,
-) => {
+): void {
   if (!slidesRef.current || !revealRef.current) return
 
   const slidesContainer = slidesRef.current
@@ -55,10 +55,10 @@ const setSlide = (
   }
 }
 
-const updateSlides = (
+function updateSlides(
   activeSlideIndex: number,
   revealRef: RefObject<Reveal.Api | null>,
-) => {
+): void {
   if (!revealRef.current) return
 
   // Reveal.jsに同期
@@ -74,10 +74,10 @@ const updateSlides = (
   })
 }
 
-const fixImageHeight = (
+function fixImageHeight(
   slidesRef: RefObject<HTMLDivElement | null>,
   styleRef: RefObject<HTMLStyleElement | null>,
-) => {
+): void {
   const sections = slidesRef.current?.querySelectorAll('section')
   const heightStyles = sections
     ? Array.from(sections).map((section, index) => {
@@ -86,7 +86,6 @@ const fixImageHeight = (
         section.removeAttribute('hidden')
         section.style.display = 'block'
         const images = section.querySelectorAll('img')
-        console.log(images)
 
         if (images.length === 0) return
 
@@ -105,9 +104,12 @@ const fixImageHeight = (
 
         const slideHeight =
           slidesRef.current?.getBoundingClientRect().height ?? 0
+
         const imgHeight = Math.floor((slideHeight - usedHeight) / images.length)
+
         const pdfImgHeight = Math.floor(
-          (imgHeight * (150 / slideHeight)) / images.length,
+          // 70 はマジックナンバーで手動調整
+          (imgHeight * (70 / slideHeight)) / images.length,
         )
 
         return `.section_${index} img{height: ${imgHeight}px;} .pdf-page .section_${index} img{height: ${pdfImgHeight}px;}`
@@ -151,7 +153,7 @@ export function useRevealInit(
         })
 
         const slides = await getSlides(mdData)
-        setSlide(slides, slidesRef, revealRef, 0)
+        setSlides(slides, slidesRef, revealRef, 0)
 
         await revealRef.current.initialize()
 
@@ -196,7 +198,7 @@ export function useRevealUpdate(
     const update = async () => {
       try {
         const slides = await getSlides(mdData)
-        setSlide(slides, slidesRef, revealRef, 0)
+        setSlides(slides, slidesRef, revealRef, 0)
         fixImageHeight(slidesRef, styleRef)
         updateSlides(activeSlideIndex, revealRef)
       } catch (error) {

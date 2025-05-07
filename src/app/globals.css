@@ -41,6 +41,26 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --animate-toast: slide 4s ease !important;
+}
+
+@keyframes slide {
+  0% {
+    top: -180px;
+  }
+  20% {
+    /* transform: translateY(0px); */
+    top: 12px;
+  }
+  60% {
+    /* transform: translateY(0px); */
+    top: 12px;
+  }
+  100% {
+    /* transform: translateY(0px); */
+    top: 12px;
+    display: none;
+  }
 }
 
 :root {
@@ -121,47 +141,59 @@
   }
 }
 
-.reveal.center .slides section p:has(img) {
-  overflow: hidden !important;
-}
+/* --- reveal印刷用スタイル（重複・冗長整理済み） --- */
 .reveal.center .slides section p img {
-  width: auto !important;
-  margin: 0 auto !important;
-  object-fit: contain !important;
+  overflow: hidden;
+  width: auto;
+  margin: 0 auto;
+  object-fit: contain;
 }
 
-/* 以下はrevealからの流用と一部改定 */
+:root {
+  /* baseは4:3 */
+  --reveal-base-width: 400px;
+  --reveal-custom-width: 204px;
+  --reveal-custom-height: 153px;
+  --reveal-custom-up-scale: calc(400 / 204);
+  --reveal-custom-down-scale: calc(204 / 400);
+  --reveal-custom-left: calc(-400px * (1 - 204 / 400) / 2);
+}
+
 .reveal-print {
   height: 100%;
-  /* overflow: visible; */
   width: 100%;
 }
 
+/* 印刷時に非表示にする要素 */
 .reveal-print .nestedarrow,
 .reveal-print .reveal .controls,
 .reveal-print .reveal .playback,
 .reveal-print .reveal .progress,
 .reveal-print .reveal.overview,
-.reveal-print .state-background {
+.reveal-print .state-background,
+.reveal-print .aria-status {
   display: none !important;
 }
 
-.reveal-print .reveal pre code {
-  overflow: hidden !important;
-}
-
+/* reveal本体・スライド領域の調整 */
 .reveal-print .reveal {
   height: auto !important;
   overflow: hidden !important;
   width: auto !important;
 }
-
 .reveal-print .reveal .slides {
   height: auto !important;
   position: static;
   width: 100% !important;
   zoom: 1 !important;
-  display: block;
+  display: grid;
+  grid-template-columns: repeat(
+      auto-fit,
+      calc(var(--reveal-custom-height) + 1.5rem * 2)
+    );
+  justify-content: center; /* 全体を中央に */
+  align-content: start;
+  gap: 1rem;
   left: auto;
   margin: 0 !important;
   overflow: visible;
@@ -172,28 +204,98 @@
   top: auto;
 }
 
+/* .pdf-page サイズ・共通化 */
 .reveal-print .reveal .slides .pdf-page {
+  width: var(--reveal-custom-width);
+  height: var(--reveal-custom-height);
   overflow: hidden;
   page-break-after: always;
   position: relative;
   z-index: 1;
 }
-
 .reveal-print .reveal .slides .pdf-page:last-of-type {
   page-break-after: avoid;
 }
 
+/* sectionの基本スタイル */
 .reveal-print .reveal .slides section {
   box-sizing: border-box !important;
   display: block !important;
-  margin: 0 !important;
+  margin: 0 auto !important;
   min-height: 1px;
   opacity: 1 !important;
   padding: 0 !important;
   position: absolute !important;
-  transform: none !important;
+  top: 50%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: fit-content !important;
+  width: 90%;
+  transform: translateY(-50%);
   transform-style: flat !important;
   visibility: visible !important;
+}
+
+/* タイトル系のフォントサイズ・マージン */
+.reveal-print .reveal .slides section h1,
+.reveal-print .reveal .slides section h2,
+.reveal-print .reveal .slides section h3,
+.reveal-print .reveal .slides section h4 {
+  margin-bottom: .3rem !important;
+}
+.reveal-print .reveal .slides section h1 {
+  font-size: calc(2.4rem * var(--reveal-custom-down-scale)) !important;
+}
+.reveal-print .reveal .slides section h2 {
+  font-size: calc(1.5rem * var(--reveal-custom-down-scale)) !important;
+}
+.reveal-print .reveal .slides section h3 {
+  font-size: calc(1.3rem * var(--reveal-custom-down-scale)) !important;
+}
+.reveal-print .reveal .slides section h4 {
+  font-size: calc(1.1rem * var(--reveal-custom-down-scale)) !important;
+}
+
+/* テキスト系のフォントサイズ */
+.reveal-print .reveal .slides section *,
+.reveal-print .reveal .slides section p,
+.reveal-print .reveal .slides section li,
+.reveal-print .reveal .slides section pre,
+.reveal-print .reveal .slides section span,
+.reveal-print .reveal .slides section strong,
+.reveal-print .reveal .slides section em,
+.reveal-print .reveal .slides section td {
+  font-size: calc(1rem * var(--reveal-custom-down-scale)) !important;
+}
+
+/* p, pre のマージン共通化 */
+.reveal-print .reveal .slides section p,
+.reveal-print .reveal .slides section pre,
+.reveal-print .reveal .slides blockquote,
+.reveal-print .reveal .slides section pre:has(code) {
+  margin: .4em auto !important;
+}
+
+/* 半角カンマ用のnowrapスタイル */
+.reveal-print .reveal .slides section .nowrap-comma {
+  white-space: nowrap;
+}
+
+/* code, code span の共通化 */
+.reveal-print .reveal .slides section code,
+.reveal-print .reveal .slides section code span {
+  margin: 0 !important;
+  font-size: calc(.7rem * var(--reveal-custom-down-scale)) !important;
+  line-height: 1.2;
+}
+.reveal-print .reveal .slides section code {
+  padding: .75em;
+}
+
+/* その他の印刷用調整 */
+.reveal-print .reveal pre code {
+  overflow: hidden !important;
 }
 
 .reveal-print .reveal section.stack {
@@ -204,15 +306,12 @@
   page-break-after: avoid !important;
   position: relative !important;
 }
-
 .reveal-print .reveal img {
   box-shadow: none;
 }
-
 .reveal-print .reveal .backgrounds {
   display: none;
 }
-
 .reveal-print .reveal .slide-background {
   display: block !important;
   height: 100%;
@@ -222,12 +321,10 @@
   width: 100%;
   z-index: auto !important;
 }
-
 .reveal-print .reveal.show-notes {
   max-height: none;
   max-width: none;
 }
-
 .reveal-print .reveal .speaker-notes-pdf {
   bottom: auto;
   display: block;
@@ -239,7 +336,6 @@
   width: 100%;
   z-index: 100;
 }
-
 .reveal-print .reveal .speaker-notes-pdf[data-layout="separate-page"] {
   background-color: transparent;
   border: 0;
@@ -248,294 +344,32 @@
   page-break-after: always;
   position: relative;
 }
-
 .reveal-print .reveal .slide-number-pdf {
   display: block;
   font-size: 14px;
   position: absolute;
   visibility: visible;
 }
-
-.reveal-print .aria-status {
-  display: none;
+/* --- CodeMirror 高さ指定（集約） --- */
+:root {
+  --codemirror-height-sm: 300px;
+  --codemirror-height-md: 355px;
+  --codemirror-height-lg: 380px;
 }
-
-/* @media print {
-  html:not(.print-pdf) {
-    height: auto;
-    overflow: visible;
-    width: auto;
-  }
-
-  html:not(.print-pdf) body {
-    margin: 0;
-    overflow: visible;
-    padding: 0;
-  }
-
-  html:not(.print-pdf) .reveal {
-    background: #fff;
-    font-size: 20pt;
-  }
-
-  html:not(.print-pdf) .reveal .backgrounds,
-  html:not(.print-pdf) .reveal .controls,
-  html:not(.print-pdf) .reveal .progress,
-  html:not(.print-pdf) .reveal .slide-number,
-  html:not(.print-pdf) .reveal .state-background {
-    display: none !important;
-  }
-
-  html:not(.print-pdf) .reveal li,
-  html:not(.print-pdf) .reveal p,
-  html:not(.print-pdf) .reveal td {
-    color: #000;
-    font-size: 20pt !important;
-  }
-
-  html:not(.print-pdf) .reveal h1,
-  html:not(.print-pdf) .reveal h2,
-  html:not(.print-pdf) .reveal h3,
-  html:not(.print-pdf) .reveal h4,
-  html:not(.print-pdf) .reveal h5,
-  html:not(.print-pdf) .reveal h6 {
-    color: #000 !important;
-    height: auto;
-    letter-spacing: normal;
-    line-height: normal;
-    text-align: left;
-  }
-
-  html:not(.print-pdf) .reveal h1 {
-    font-size: 28pt !important;
-  }
-
-  html:not(.print-pdf) .reveal h2 {
-    font-size: 24pt !important;
-  }
-
-  html:not(.print-pdf) .reveal h3 {
-    font-size: 22pt !important;
-  }
-
-  html:not(.print-pdf) .reveal h4 {
-    font-size: 22pt !important;
-    font-variant: small-caps;
-  }
-
-  html:not(.print-pdf) .reveal h5 {
-    font-size: 21pt !important;
-  }
-
-  html:not(.print-pdf) .reveal h6 {
-    font-size: 20pt !important;
-    font-style: italic;
-  }
-
-  html:not(.print-pdf) .reveal a:link,
-  html:not(.print-pdf) .reveal a:visited {
-    color: #000 !important;
-    font-weight: 700;
-    text-decoration: underline;
-  }
-
-  html:not(.print-pdf) .reveal div,
-  html:not(.print-pdf) .reveal ol,
-  html:not(.print-pdf) .reveal p,
-  html:not(.print-pdf) .reveal ul {
-    display: block;
-    height: auto;
-    margin: 0;
-    overflow: visible;
-    position: static;
-    text-align: left !important;
-    visibility: visible;
-    width: auto;
-  }
-
-  html:not(.print-pdf) .reveal pre,
-  html:not(.print-pdf) .reveal table {
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  html:not(.print-pdf) .reveal pre code {
-    padding: 20px;
-  }
-
-  html:not(.print-pdf) .reveal blockquote {
-    margin: 20px 0;
-  }
-
-  html:not(.print-pdf) .reveal .slides {
-    padding: 0 !important;
-    zoom: 1 !important;
-    perspective: none;
-    perspective-origin: 50% 50%;
-    text-align: left !important;
-    transform: none !important;
-  }
-
-  html:not(.print-pdf) .reveal .slides,
-  html:not(.print-pdf) .reveal .slides section {
-    display: block !important;
-    height: auto !important;
-    left: 0 !important;
-    margin-left: 0 !important;
-    margin-top: 0 !important;
-    overflow: visible !important;
-    position: static !important;
-    top: 0 !important;
-    width: auto !important;
-  }
-
-  html:not(.print-pdf) .reveal .slides section {
-    opacity: 1 !important;
-    padding: 60px 20px !important;
-    page-break-after: always !important;
-    transform: none !important;
-    transform-style: flat !important;
-    transition: none !important;
-    visibility: visible !important;
-    z-index: auto !important;
-  }
-
-  html:not(.print-pdf) .reveal .slides section.stack {
-    padding: 0 !important;
-  }
-
-  html:not(.print-pdf) .reveal .slides section:last-of-type {
-    page-break-after: avoid !important;
-  }
-
-  html:not(.print-pdf) .reveal .slides section .fragment {
-    opacity: 1 !important;
-    transform: none !important;
-    visibility: visible !important;
-  }
-
-  html:not(.print-pdf) .reveal .r-fit-text {
-    white-space: normal !important;
-  }
-
-  html:not(.print-pdf) .reveal section img {
-    background: #fff;
-    border: 1px solid #666;
-    box-shadow: none;
-    display: block;
-    margin: 15px 0;
-  }
-
-  html:not(.print-pdf) .reveal section small {
-    font-size: .8em;
-  }
-
-  html:not(.print-pdf) .reveal .hljs {
-    max-height: 100%;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    font-size: 15pt;
-    word-break: break-word;
-  }
-
-  html:not(.print-pdf) .reveal .hljs .hljs-ln-numbers {
-    white-space: nowrap;
-  }
-
-  html:not(.print-pdf) .reveal .hljs td {
-    color: inherit !important;
-    font-size: inherit !important;
-  }
-} */
-
-.reveal-print .reveal .slides .pdf-page {
-  width: 400px;
-  height: 300px;
-  margin: auto;
-}
-
-.reveal-print .reveal .slides section {
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  position: absolute !important;
-  height: fit-content !important;
-  margin: auto !important;
-}
-
-.reveal-print .reveal .slides section * {
-  font-size: .9rem !important;
-}
-
-.reveal-print .reveal .slides section h1 {
-  font-size: 2.2rem !important;
-  margin-bottom: .3em !important;
-}
-.reveal-print .reveal .slides section h2 {
-  font-size: 1.4rem !important;
-  margin-bottom: .3em !important;
-}
-.reveal-print .reveal .slides section h3 {
-  font-size: 1.2rem !important;
-  margin-bottom: .3em !important;
-}
-.reveal-print .reveal .slides section h4 {
-  font-size: 1rem !important;
-  margin-bottom: .3em !important;
-}
-
-.reveal-print .reveal .slides section p,
-.reveal-print .reveal .slides section li,
-.reveal-print .reveal .slides section pre,
-.reveal-print .reveal .slides section span,
-.reveal-print .reveal .slides section strong,
-.reveal-print .reveal .slides section em,
-.reveal-print .reveal .slides section td {
-  font-size: .9rem;
-}
-
-.reveal-print .reveal .slides section p,
-.reveal-print .reveal .slides section pre {
-  margin: .3em 0 !important;
-}
-
-.reveal-print .reveal .slides section pre:has(code) {
-  margin: auto !important;
-}
-.reveal-print .reveal .slides section code,
-.reveal-print .reveal .slides section code span {
-  margin: 0 !important;
-  font-size: .7rem !important;
-  line-height: 1.2;
-}
-.reveal-print .reveal .slides section code {
-  padding: .75em;
-}
-
-/* CodeMirror custom height */
 .CodeMirror-scroll {
-  height: 300px !important;
+  overscroll-behavior-y: contain;
+  height: var(--codemirror-height-sm) !important;
 }
-
-@media (min-width: 768px) {
-  .CodeMirror-scroll {
-    height: 300px !important;
-  }
-}
-
 @media (min-width: 1024px) {
   .CodeMirror-scroll {
-    height: 355px !important;
+    height: var(--codemirror-height-md) !important;
   }
 }
-
 @media (min-width: 1280px) {
   .CodeMirror-scroll {
-    height: 380px !important;
+    height: var(--codemirror-height-lg) !important;
   }
 }
-
 .editor-statusbar {
   display: none;
   visibility: hidden;
