@@ -4,12 +4,15 @@ import { type NextRequest, NextResponse } from 'next/server'
 export async function GET(req: NextRequest) {
   const url = req.nextUrl.searchParams.get('url')
   if (!url) {
-    return new NextResponse('Missing url', { status: 400 })
+    return NextResponse.json({ message: 'Missing url' }, { status: 400 })
   }
 
   // Check if the URL starts with 'blob:' or 'data:'
   if (url.startsWith('blob:') || url.startsWith('data:')) {
-    return new NextResponse('Unsupported URL scheme', { status: 400 })
+    return NextResponse.json(
+      { message: 'Unsupported URL scheme' },
+      { status: 400 },
+    )
   }
 
   // Check if the hostname is allowed
@@ -19,11 +22,14 @@ export async function GET(req: NextRequest) {
 
     hostname = parsedUrl.hostname
   } catch {
-    return new NextResponse('Invalid URL', { status: 400 })
+    return NextResponse.json({ message: 'Invalid URL' }, { status: 400 })
   }
 
   if (!isAllowedHost(hostname)) {
-    return new NextResponse('Blocked by whitelist', { status: 403 })
+    return NextResponse.json(
+      { message: 'Blocked by whitelist' },
+      { status: 403 },
+    )
   }
 
   try {
@@ -37,7 +43,7 @@ export async function GET(req: NextRequest) {
       'image/gif' ||
       'image/bmp'
     const buffer = await response.arrayBuffer()
-    s
+
     return new NextResponse(Buffer.from(buffer), {
       status: 200,
       headers: {
@@ -46,6 +52,9 @@ export async function GET(req: NextRequest) {
       },
     })
   } catch (_) {
-    return new NextResponse('Failed to fetch image', { status: 500 })
+    return NextResponse.json(
+      { message: 'Failed to fetch image' },
+      { status: 500 },
+    )
   }
 }
