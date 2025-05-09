@@ -1,4 +1,4 @@
-import DisplayAllSlide from '@/feature/display-all-slide-2'
+import DisplayAllSlide from '@/feature/display-all-slide'
 
 export default function DashboardPage() {
   return <DisplayAllSlide />

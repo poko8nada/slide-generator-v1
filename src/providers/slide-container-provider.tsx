@@ -2,7 +2,8 @@ import type React from 'react'
 import { type ReactNode, createContext, useContext, useRef } from 'react'
 
 interface SlideContainerContextProps {
-  containerRef: React.RefObject<HTMLDivElement | null>
+  // containerRef: React.RefObject<HTMLDivElement | null>
+  revealRef: React.RefObject<Reveal.Api | null>
 }
 
 const SlideContainerContext = createContext<
@@ -12,10 +13,11 @@ const SlideContainerContext = createContext<
 export const SlideContainerProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null)
+  // const containerRef = useRef<HTMLDivElement>(null)
+  const revealRef = useRef<Reveal.Api | null>(null)
 
   return (
-    <SlideContainerContext.Provider value={{ containerRef }}>
+    <SlideContainerContext.Provider value={{ revealRef }}>
       {children}
     </SlideContainerContext.Provider>
   )

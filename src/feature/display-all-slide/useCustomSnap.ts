@@ -1,73 +1,24 @@
 import { useEffect, useState } from 'react'
 
-function formatSnapContent(
-  container: HTMLDivElement | null,
-): HTMLDivElement | null {
-  try {
-    if (!container) {
-      console.error('Container is null')
-      return null
-    }
+const setSlideWrapper = (slides: HTMLElement[]) => {
+  const newSlides = slides.map((slide, index) => {
+    const div = document.createElement('div')
+    div.classList.add('pdf-page')
+    div.style.background = 'var(--r-background-color)'
+    const section = document.createElement('section')
+    section.classList.add(`section_${index}`)
 
-    container.removeAttribute('style')
-    container.removeAttribute('class')
-    container.classList.add('reveal', 'center')
-
-    const snapWrapper = document.createElement('div')
-    snapWrapper.classList.add('reveal-print')
-    snapWrapper.appendChild(container as Node)
-
-    const slides = container?.querySelector('.slides') as HTMLDivElement | null
-    if (!slides) return container
-    if (slides) {
-      slides.removeAttribute('style')
-      slides.removeAttribute('class')
-      slides.classList.add('slides')
-    }
-
-    const sections = container?.querySelectorAll('section') as
-      | NodeListOf<HTMLElement>
-      | undefined
-    if (!sections) return container
-
-    const background = (child: string) => {
-      return `
-      <div class="pdf-page" style="background:var(--r-background-color);">
-      ${child}
-      <div class="slide-background present" data-loaded="true" style="display: block;"><div class="slide-background-content"></div></div>
-      </div>
-      `
-    }
-
-    let formattedSections = ''
-    for (const section of sections) {
-      section.removeAttribute('style')
-      section.removeAttribute('hidden')
-      formattedSections += background(section.outerHTML)
-    }
-    if (slides) {
-      slides.innerHTML = formattedSections
-    }
-
-    const backgrounds = container?.querySelector(
-      '.backgrounds',
-    ) as HTMLDivElement | null
-    if (!backgrounds) return container
-    if (backgrounds) {
-      backgrounds.innerHTML = ''
-    }
-
-    return snapWrapper
-  } catch (error) {
-    console.error('Error formatting snap content:', error)
-    return null
-  }
+    section.innerHTML = slide.innerHTML
+    div.appendChild(section)
+    return div
+  })
+  return newSlides
 }
 
 export function useCustomSnap(
   mdData: string,
-  containerRef: React.RefObject<HTMLDivElement | null>,
-  setSlideSnap: React.Dispatch<React.SetStateAction<HTMLDivElement | null>>,
+  revealRef: React.RefObject<Reveal.Api | null>,
+  setSlideSnap: React.Dispatch<HTMLElement[] | null>,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
   const [snapMdData, setSnapMdData] = useState('')
@@ -75,31 +26,19 @@ export function useCustomSnap(
   // refはuseEffectの依存配列に含めなくてよい
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    const container = containerRef.current
-    if (!container || mdData === snapMdData) return
+    if (!revealRef.current && mdData === snapMdData) return
 
-    const processSnap = async () => {
-      try {
-        await new Promise(resolve => setTimeout(resolve, 1500)) // debounce
-        const snapHtml = formatSnapContent(
-          container.cloneNode(true) as HTMLDivElement,
-        )
-        if (!snapHtml) {
-          throw new Error('スライド生成に失敗しました')
-        }
-        setSlideSnap(snapHtml)
-      } catch (error) {
-        console.error(error)
-        setSlideSnap(null)
-        throw error
-      } finally {
-        setIsLoading(false)
-        setSnapMdData(mdData)
-      }
-    }
+    const timer = setTimeout(() => {
+      const slides = revealRef.current?.getSlides()
+      if (!slides) return
 
-    processSnap().catch(error => {
-      throw error
-    })
+      const newSlides = setSlideWrapper(slides)
+
+      setSlideSnap(newSlides)
+      setSnapMdData(mdData)
+      setIsLoading(false)
+    }, 1500)
+
+    return () => clearTimeout(timer)
   }, [mdData, setSlideSnap, snapMdData])
 }

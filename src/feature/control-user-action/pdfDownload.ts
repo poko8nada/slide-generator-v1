@@ -1,25 +1,37 @@
 import { toJpeg } from 'html-to-image'
 import jsPDF from 'jspdf'
 
-function createCloneSlides(slideSnap: HTMLDivElement) {
-  const containerClone = slideSnap?.cloneNode(true) as HTMLDivElement
+function createCloneSlides(slideSnap: HTMLElement[]) {
+  const slideClones = slideSnap.map(item =>
+    item.cloneNode(true),
+  ) as HTMLElement[]
 
-  if (containerClone) {
-    // 一時的に document.body に追加
-    containerClone.style.position = 'absolute'
-    containerClone.style.left = '-9999px'
-    containerClone.style.visibility = 'hidden'
-    document.body.appendChild(containerClone)
+  const container = document.createElement('div')
+  container.classList.add('reveal-print')
+  const revealContainer = document.createElement('div')
+  revealContainer.classList.add('reveal', 'center')
+  const slideContainer = document.createElement('div')
+  slideContainer.classList.add('slides')
+
+  container.appendChild(revealContainer)
+  revealContainer.appendChild(slideContainer)
+
+  for (const slide of slideClones) {
+    slideContainer.appendChild(slide)
   }
 
-  const slides = containerClone.querySelectorAll(
-    '.pdf-page',
-  ) as NodeListOf<HTMLDivElement>
+  if (container) {
+    // 一時的に document.body に追加
+    container.style.position = 'absolute'
+    container.style.left = '-9999px'
+    container.style.visibility = 'hidden'
+    document.body.appendChild(container)
+  }
 
-  return { slides, containerClone }
+  return { slideClones, container }
 }
 
-async function imgProxy(slide: HTMLDivElement) {
+async function imgProxy(slide: HTMLElement) {
   const images = slide.querySelectorAll('img')
   if (images.length === 0) return Promise.resolve({ ok: true })
 
@@ -36,45 +48,28 @@ async function imgProxy(slide: HTMLDivElement) {
   }
 }
 
-function customListStyle(slide: HTMLDivElement) {
-  // li要素のテキストノードを処理して半角カンマを含む部分をspanでラップ
-  // カンマが入っている場合、改行されて次行と重なる可能性があるため
-  const liElements = slide.querySelectorAll('li')
-  for (const li of liElements) {
-    const textNodes = Array.from(li.childNodes).filter(
-      node => node.nodeType === Node.TEXT_NODE,
-    )
-    for (const textNode of textNodes) {
-      const text = textNode?.nodeValue
-      if (text?.includes(',')) {
-        const parts = text.split(',')
-        const fragment = document.createDocumentFragment()
-        for (const [index, part] of parts.entries()) {
-          const span = document.createElement('span')
-          span.textContent = part
-          if (index < parts.length - 1) {
-            span.classList.add('nowrap-comma')
-            fragment.appendChild(span)
-            const comma = document.createTextNode(',')
-            fragment.appendChild(comma)
-          } else {
-            fragment.appendChild(span)
-          }
-        }
-        li.replaceChild(fragment, textNode)
+function customListStyle(slide: HTMLElement) {
+  for (const li of slide.querySelectorAll('li')) {
+    for (const node of li.childNodes) {
+      if (
+        node.nodeType === Node.TEXT_NODE &&
+        /[,(,)]/.test(node.nodeValue ?? '')
+      ) {
+        li.classList.add('nowrap-comma')
+        break
       }
     }
   }
 }
 
-export async function pdfDownload(slideSnap: HTMLDivElement) {
-  const { slides, containerClone } = createCloneSlides(slideSnap)
-  if (slides.length === 0) return
+export async function pdfDownload(slideSnap: HTMLElement[]) {
+  const { slideClones, container } = createCloneSlides(slideSnap)
+  if (slideClones.length === 0) return
 
   const scale = 4.0
   const formatSize = [
-    slides[0].offsetWidth * scale,
-    slides[0].offsetHeight * scale,
+    slideClones[0].offsetWidth * scale,
+    slideClones[0].offsetHeight * scale,
   ]
 
   const pdf = new jsPDF({
@@ -83,7 +78,7 @@ export async function pdfDownload(slideSnap: HTMLDivElement) {
     format: formatSize,
   })
 
-  for (const [index, slide] of slides.entries()) {
+  for (const [index, slide] of slideClones.entries()) {
     const res = await imgProxy(slide)
 
     try {
@@ -135,7 +130,7 @@ export async function pdfDownload(slideSnap: HTMLDivElement) {
   }
 
   // 処理後に containerClone を削除
-  containerClone?.parentNode?.removeChild(containerClone)
+  container?.parentNode?.removeChild(container)
   pdf.deletePage(pdf.getNumberOfPages())
   await pdf.save('slide.pdf', { returnPromise: true })
 }

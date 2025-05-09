@@ -3,15 +3,15 @@ import { type ReactNode, createContext, useContext, useState } from 'react'
 // Create the context
 const SlideSnapContext = createContext<
   | {
-      slideSnap: HTMLDivElement | null
-      setSlideSnap: React.Dispatch<React.SetStateAction<HTMLDivElement | null>>
+      slideSnap: HTMLElement[] | null
+      setSlideSnap: React.Dispatch<React.SetStateAction<HTMLElement[] | null>>
     }
   | undefined
 >(undefined)
 
 // Provider component
 export const SlideSnapProvider = ({ children }: { children: ReactNode }) => {
-  const [slideSnap, setSlideSnap] = useState<HTMLDivElement | null>(null)
+  const [slideSnap, setSlideSnap] = useState<HTMLElement[] | null>(null)
 
   return (
     <SlideSnapContext.Provider value={{ slideSnap, setSlideSnap }}>
