@@ -19,7 +19,7 @@ export default function Error({
   return (
     <div className='flex flex-col items-center justify-center bg-gray-100 p-4'>
       <h3 className='text-lg text-gray-800 mb-4'>Something went wrong!</h3>
-      <pre className='bg-gray-200 text-gray-700 p-3 rounded-md mb-4 text-sm'>
+      <pre className='bg-gray-200 text-gray-700 p-3 rounded-md mb-4 text-sm whitespace-break-spaces'>
         {error.message}
         {error.digest && `\nDigest: ${error.digest}`}
       </pre>

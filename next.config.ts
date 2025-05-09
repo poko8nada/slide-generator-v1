@@ -6,7 +6,7 @@ import { setupDevPlatform } from '@cloudflare/next-on-pages/next-dev'
 // has no impact outside of that. For more information see:
 // https://github.com/cloudflare/next-on-pages/blob/main/internal-packages/next-dev/README.md
 if (process.env.NODE_ENV === 'development') {
-  await setupDevPlatform().catch(console.error)
+  setupDevPlatform().catch(console.error)
 }
 
 import type { NextConfig } from 'next'
