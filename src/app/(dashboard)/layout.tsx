@@ -25,7 +25,10 @@ export default function DashboardLayout({
               <div className='w-full max-w-[640px] m-2'>{markdown}</div>
               <div className='w-full max-w-[640px] m-2'>{slide}</div>
             </div>
-            <Divider title='Preview' className='mt-10 mb-2' />
+            <Divider
+              title='Preview'
+              className='mt-10 mb-2 sticky top-18 z-50'
+            />
             <div className='p-2 lg:p-4'>{children}</div>
           </main>
         </SlideContainerProvider>
