@@ -158,11 +158,11 @@
 :root {
   /* baseは4:3 */
   --reveal-base-width: 400px;
-  --reveal-custom-width: 204px;
-  --reveal-custom-height: 153px;
-  --reveal-custom-up-scale: calc(400 / 204);
-  --reveal-custom-down-scale: calc(204 / 400);
-  --reveal-custom-left: calc(-400px * (1 - 204 / 400) / 2);
+  --reveal-custom-width: 310px;
+  --reveal-custom-height: calc(300px / 400 * 300);
+  --reveal-custom-up-scale: calc(400 / 310);
+  --reveal-custom-down-scale: calc(310 / 400);
+  /* --reveal-custom-left: calc(-400px * (1 - 300 / 400) / 2); */
 }
 
 .reveal-print {
@@ -193,13 +193,10 @@
   width: 100% !important;
   zoom: 1 !important;
   display: grid;
-  grid-template-columns: repeat(
-      auto-fit,
-      calc(var(--reveal-custom-height) + 1.5rem * 2)
-    );
+  grid-template-columns: repeat(auto-fit, calc(var(--reveal-custom-width)));
+  grid-gap: 1.5rem;
   justify-content: center; /* 全体を中央に */
   align-content: start;
-  gap: 1rem;
   left: auto;
   margin: 0 !important;
   overflow: visible;

@@ -49,15 +49,11 @@ async function imgProxy(slide: HTMLElement) {
 }
 
 function customListStyle(slide: HTMLElement) {
-  for (const li of slide.querySelectorAll('li')) {
-    for (const node of li.childNodes) {
-      if (
-        node.nodeType === Node.TEXT_NODE &&
-        /[,(,)]/.test(node.nodeValue ?? '')
-      ) {
-        li.classList.add('nowrap-comma')
-        break
-      }
+  const pattern = /[0-9A-Za-z!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/
+  const listItems = slide.querySelectorAll('li')
+  for (const li of listItems) {
+    if (pattern.test(li.textContent ?? '')) {
+      li.classList.add('nowrap-comma')
     }
   }
 }
@@ -66,7 +62,7 @@ export async function pdfDownload(slideSnap: HTMLElement[]) {
   const { slideClones, container } = createCloneSlides(slideSnap)
   if (slideClones.length === 0) return
 
-  const scale = 4.0
+  const scale = 3.0
   const formatSize = [
     slideClones[0].offsetWidth * scale,
     slideClones[0].offsetHeight * scale,
