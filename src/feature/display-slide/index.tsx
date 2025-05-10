@@ -12,8 +12,10 @@ import { useSlide } from '@/providers/slide-container-provider'
 
 export default function DisplaySlide() {
   const { mdData, activeSlideIndex } = useMdData()
-  const { containerRef } = useSlide()
-  const revealRef = useRef<Reveal.Api | null>(null)
+  // const { containerRef } = useSlide()
+  // const revealRef = useRef<Reveal.Api | null>(null)
+  const { revealRef } = useSlide()
+  const containerRef = useRef<HTMLDivElement | null>(null)
   const slidesRef = useRef<HTMLDivElement | null>(null)
   const styleRef = useRef<HTMLStyleElement | null>(null)
 
