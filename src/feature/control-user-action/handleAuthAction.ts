@@ -1,6 +1,10 @@
 'use server'
-import { signIn } from '@/auth'
+import { signIn, signOut } from '@/auth'
 
 export const handleSignIn = async () => {
   await signIn()
+}
+
+export const handleSignOut = async () => {
+  await signOut()
 }

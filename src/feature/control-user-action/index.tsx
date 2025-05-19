@@ -1,13 +1,14 @@
 'use client'
 import CustomButton from '@/components/custom-button'
 import { toastError, toastSuccess } from '@/components/custom-toast'
-import { SignInBtn } from '@/components/ui/auth-btn'
+import { SignInBtn, SignOutBtn } from '@/components/ui/auth-btn'
+import UserProfile from '@/components/user-profile'
 import { useSlideSnap } from '@/providers/slide-snap-provider'
 import { Download } from 'lucide-react'
 import type { Session } from 'next-auth'
 import Form from 'next/form'
 import { useState } from 'react'
-import { handleSignIn } from './handleAuthAction'
+import { handleSignIn, handleSignOut } from './handleAuthAction'
 import { pdfDownload } from './pdfDownload'
 
 export default function ControlUserAction({
@@ -43,18 +44,11 @@ export default function ControlUserAction({
       </CustomButton>
       <div className='flex flex-col items-center sm:gap-1'>
         {session?.user ? (
-          <div className='flex items-center gap-2'>
-            {session.user.image && (
-              <div className='h-8 w-8 overflow-hidden rounded-full'>
-                <img
-                  src={session.user.image}
-                  alt={session.user.name || 'User profile'}
-                  className='h-full w-full object-cover'
-                />
-              </div>
-            )}
-            <span className='text-sm font-medium'>{session.user.name}</span>
-          </div>
+          <UserProfile session={session}>
+            <Form action={handleSignOut}>
+              <SignOutBtn />
+            </Form>
+          </UserProfile>
         ) : (
           <Form action={handleSignIn}>
             <SignInBtn />
