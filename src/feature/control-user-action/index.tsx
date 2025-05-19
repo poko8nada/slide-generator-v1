@@ -1,13 +1,20 @@
 'use client'
 import CustomButton from '@/components/custom-button'
-import { Button } from '@/components/ui/button'
+import { toastError, toastSuccess } from '@/components/custom-toast'
+import { SignInBtn } from '@/components/ui/auth-btn'
 import { useSlideSnap } from '@/providers/slide-snap-provider'
 import { Download } from 'lucide-react'
+import type { Session } from 'next-auth'
+import Form from 'next/form'
 import { useState } from 'react'
-import { toast } from 'sonner'
+import { handleSignIn } from './handleAuthAction'
 import { pdfDownload } from './pdfDownload'
 
-export default function ControlUserAction() {
+export default function ControlUserAction({
+  session,
+}: {
+  session: Session | null
+}) {
   const { slideSnap } = useSlideSnap()
   const [isLoading, setIsLoading] = useState(false)
 
@@ -16,17 +23,11 @@ export default function ControlUserAction() {
     setIsLoading(true)
     const error = await pdfDownload(slideSnap)
     if (error) {
-      toast.error(`${error}`, {
-        duration: 3000,
-        style: { background: 'hsl(0 72.2% 50.6%)', color: '#fff' },
-      })
+      toastError(error)
       setIsLoading(false)
       return
     }
-    toast.success('download success', {
-      duration: 3000,
-      style: { background: 'hsl(161.4 93.5% 30.4%)', color: '#fff' },
-    })
+    toastSuccess('download success')
     setIsLoading(false)
   }
   return (
@@ -41,12 +42,24 @@ export default function ControlUserAction() {
         download as PDF
       </CustomButton>
       <div className='flex flex-col items-center sm:gap-1'>
-        <Button disabled className='line-through'>
-          log in
-        </Button>
-        <span className='text-xs tracking-tight text-muted-foreground'>
-          unlock in 1.0.0
-        </span>
+        {session?.user ? (
+          <div className='flex items-center gap-2'>
+            {session.user.image && (
+              <div className='h-8 w-8 overflow-hidden rounded-full'>
+                <img
+                  src={session.user.image}
+                  alt={session.user.name || 'User profile'}
+                  className='h-full w-full object-cover'
+                />
+              </div>
+            )}
+            <span className='text-sm font-medium'>{session.user.name}</span>
+          </div>
+        ) : (
+          <Form action={handleSignIn}>
+            <SignInBtn />
+          </Form>
+        )}
       </div>
     </div>
   )
