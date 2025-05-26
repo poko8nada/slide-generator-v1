@@ -6,15 +6,8 @@ import type * as React from 'react'
 
 import { cn } from '@/lib/utils'
 
-function Sheet({
-  className,
-  ...props
-}: React.ComponentProps<typeof SheetPrimitive.Root> & { className?: string }) {
-  return (
-    <div className={cn(className)}>
-      <SheetPrimitive.Root data-slot='sheet' {...props} />
-    </div>
-  )
+function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
+  return <SheetPrimitive.Root data-slot='sheet' {...props} />
 }
 
 function SheetTrigger({
