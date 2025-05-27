@@ -19,7 +19,7 @@ export default function UserProfile({
       {session.user.image && (
         <DropdownMenu>
           <DropdownMenuTrigger className='cursor-pointer'>
-            <div className='h-8 w-8 overflow-hidden rounded-full hover:ring-4 transition-shadow duration-300'>
+            <div className='h-10 w-10 p-1 overflow-hidden rounded-full hover:ring-2 transition-shadow duration-300'>
               <img
                 src={session.user.image}
                 alt={session.user.name || 'User profile'}
