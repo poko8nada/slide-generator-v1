@@ -1,7 +1,7 @@
 # Daily Todos
 
 ## Day 1
-- [ ] スライド・ユーザー型定義（TypeScript）
+- [x] スライド・ユーザー型定義（TypeScript）
 - [ ] Drizzle ORM用DBスキーマ設計（slides, users）
 - [ ] Cloudflare Images連携設計・型定義
 
