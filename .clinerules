@@ -1,6 +1,8 @@
 ## 0. 以下があれば実装前に参照すること
-- requirements.md
-- todos.md
+- requirements.mdが基本要件
+- todos.mdが実行するイシュー
+- 作業は必ずtodos.mdに記載があるものにし、ない場合は先に確認し、承諾の上追加すること
+- 作業後は該当のtodos.mdにチェックを入れること
 
 ## 1. 関心の分離（Separation of Concerns）
 - ドメインロジックはUIやインフラの影響を受けずに記述すること。
