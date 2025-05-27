@@ -1,6 +1,9 @@
+'use client'
+import { SignOutBtn } from '@/components/ui/auth-btn'
 import {
   Sheet,
   SheetContent,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -44,6 +47,9 @@ export default function DisplaySheet() {
             ))}
           </ul>
         </div>
+        <SheetFooter>
+          <SignOutBtn />
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   )
