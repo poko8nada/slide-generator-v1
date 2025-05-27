@@ -78,9 +78,17 @@
 - ユーザーデータ：ID、表示名、認証情報
 - 型定義はTypeScriptによる定義
 
-### 6.2. ストレージ設計（将来拡張含む）
-- 現状はフロントエンド主体の設計、将来的にDB・クラウドストレージ対応を想定
-- スライド・ユーザーデータはAPI経由で永続化可能な設計
+### 6.2. ストレージ設計（Cloudflare D1 + Drizzle ORM + NextAuth.js）
+
+- ストレージにはCloudflare D1（SQLite互換クラウドDB）を利用し、全てのスライド・ユーザーデータを永続化する。
+- ORMには型安全かつマイグレーション管理が容易なDrizzle ORMを採用し、D1との連携・スキーマ管理・DB操作を行う。
+- 認証にはNextAuth.jsを用い、外部認証プロバイダと連携してユーザー認証を実現する。
+- NextAuth.jsで認証されたユーザー情報（user_id等）をDrizzle ORM経由でD1に保存・参照し、ユーザーごとのデータ分離・認可制御を徹底する。
+- アプリケーションはAPI経由でD1にアクセスし、スライド・ユーザー情報のCRUD操作を行う。
+- データスキーマ例（D1テーブル）：
+    - slides: id, user_id, title, markdown, created_at, updated_at
+    - users: id, display_name, auth_provider, created_at
+- Cloudflare D1のバックアップ・マイグレーション機能およびDrizzleのマイグレーション管理を活用し、運用・拡張性を担保する。
 
 ## 7. 将来拡張・ロードマップ
 - チーム・組織単位でのスライド共有機能
