@@ -14,6 +14,7 @@ export default function DashboardLayout({
   markdown: React.ReactNode
   slide: React.ReactNode
   header: React.ReactNode
+  sheet: React.ReactNode
 }) {
   return (
     <SlideSnapProvider>

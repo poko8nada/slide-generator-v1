@@ -3,13 +3,7 @@ export default function GeneralHeader({
 }: { children?: React.ReactNode }) {
   return (
     <header className='bg-white border-b'>
-      <div className='mx-auto flex h-18 max-w-screen-xl items-center justify-between gap-8 px-4 sm:px-6 lg:px-8'>
-        <a className='flex items-center' href='/'>
-          <span className='sr-only'>Home</span>
-          <img src='/logo.svg' className='h-11 w-auto' alt='' />
-          <span className='text-xs tracking-tighter'>ver 0.5.0</span>
-        </a>
-
+      <div className='mx-auto flex h-18 max-w-screen-xl items-center justify-between gap-8 px-4 sm:px-6 lg:px-6'>
         {/* <div className='flex flex-1 items-center justify-end md:justify-between'> */}
         {/* <nav aria-label='Global' className='hidden md:block'>
             <ul className='flex items-center gap-6 text-sm'>
