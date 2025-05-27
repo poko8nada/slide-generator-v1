@@ -2,7 +2,7 @@
 
 ## Day 1
 - [x] スライド・ユーザー型定義（TypeScript）
-- [ ] Drizzle ORM用DBスキーマ設計（slides, users）
+- [x] Drizzle ORM用DBスキーマ設計（slides, users）
 - [ ] Cloudflare Images連携設計・型定義
 
 ## Day 2
@@ -11,9 +11,9 @@
 - [x] ユーザーごとのデータ分離・認可制御
 
 ## Day 3
-- [ ] スライドCRUD API実装（D1+Drizzle）
-- [ ] APIの型安全化・バリデーション
-- [ ] スライド保存上限・画像数制限ロジック
+- [x] スライドCRUD API実装（D1+Drizzle）【実装計画作成済み: implementation-plan-day3-slides-crud-api.md】
+- [x] APIの型安全化・バリデーション
+- [x] スライド保存上限・画像数制限ロジック
 
 ## Day 4
 - [ ] Cloudflare ImagesアップロードAPI実装
