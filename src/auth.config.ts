@@ -9,6 +9,7 @@ const db =
   typeof globalThis !== 'undefined' && 'D1' in globalThis
     ? getDrizzle(globalThis as unknown as { D1: D1Database })
     : undefined
+
 // Session を拡張
 declare module 'next-auth' {
   interface Session {

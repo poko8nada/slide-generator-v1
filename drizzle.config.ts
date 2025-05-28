@@ -7,8 +7,8 @@ export default {
   dialect: 'sqlite',
   driver: 'd1-http',
   dbCredentials: {
-    accountId: 'YOUR_ACCOUNT_ID', // Cloudflareダッシュボードから取得
+    accountId: process.env.CLOUDFLARE_ACCOUNT_ID as string, // Cloudflareダッシュボードから取得
     databaseId: '80d086ea-2700-49c0-bb84-5c0657aebf28',
-    token: 'YOUR_API_TOKEN', // Cloudflare APIトークン
+    token: process.env.CLOUDFLARE_API_TOKEN as string, // Cloudflare APIトークン
   },
 } satisfies Config

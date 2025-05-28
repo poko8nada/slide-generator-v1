@@ -8,3 +8,38 @@ export const users = sqliteTable('users', {
   emailVerified: integer('emailVerified', { mode: 'timestamp_ms' }),
   image: text('image'),
 })
+
+// accountsテーブル
+export const accounts = sqliteTable('accounts', {
+  id: text('id').primaryKey(),
+  userId: text('userId')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  type: text('type').notNull(),
+  provider: text('provider').notNull(),
+  providerAccountId: text('providerAccountId').notNull(),
+  refresh_token: text('refresh_token'),
+  access_token: text('access_token'),
+  expires_at: integer('expires_at'),
+  token_type: text('token_type'),
+  scope: text('scope'),
+  id_token: text('id_token'),
+  session_state: text('session_state'),
+})
+
+// sessionsテーブル
+export const sessions = sqliteTable('sessions', {
+  id: text('id').primaryKey(),
+  sessionToken: text('sessionToken').notNull().unique(),
+  userId: text('userId')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  expires: integer('expires', { mode: 'timestamp_ms' }).notNull(),
+})
+
+// verificationTokensテーブル
+export const verificationTokens = sqliteTable('verification_tokens', {
+  identifier: text('identifier').notNull(),
+  token: text('token').notNull().unique(),
+  expires: integer('expires', { mode: 'timestamp_ms' }).notNull(),
+})
