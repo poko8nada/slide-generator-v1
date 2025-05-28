@@ -3,13 +3,14 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "next dev",
+		"sync-env": "cat .env.shared > .env && cat .env.shared > .dev.vars",
+		"dev": "npm run sync-env && next dev",
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
 		"pages:build": "npx @cloudflare/next-on-pages",
-		"preview": "npm run pages:build && wrangler pages dev",
-		"deploy": "npm run pages:build && wrangler pages deploy",
+		"preview": "npm run sync-env && npm run pages:build && wrangler pages dev",
+		"deploy": "npm run sync-env && npm run pages:build && wrangler pages deploy",
 		"cf-typegen": "wrangler types --env-interface CloudflareEnv env.d.ts",
 		"test": "jest",
 		"test:watch": "npm run test -- --watch"
