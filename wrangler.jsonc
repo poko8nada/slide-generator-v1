@@ -13,13 +13,6 @@
 	"observability": {
 		"enabled": true
 	},
-	"d1_databases": [
-		{
-			"binding": "DB",
-			"database_name": "slide-generator-db",
-			"database_id": "80d086ea-2700-49c0-bb84-5c0657aebf28"
-		}
-	],
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

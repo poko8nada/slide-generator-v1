@@ -2,7 +2,9 @@
 import { SignOutBtn } from '@/components/ui/auth-btn'
 import {
   Sheet,
+  SheetClose,
   SheetContent,
+  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -26,7 +28,10 @@ export default function DisplaySheet() {
       </SheetTrigger>
       <SheetContent side='left'>
         <SheetHeader>
-          <SheetTitle>MD一覧</SheetTitle>
+          <SheetTitle>Edit profile</SheetTitle>
+          <SheetDescription>
+            Make changes to your profile here. Click save when you're done.
+          </SheetDescription>
         </SheetHeader>
         <div className='mt-4'>
           <div className='grid grid-cols-2 gap-x-4 px-4 py-2 font-semibold text-sm text-gray-500 border-b'>
@@ -48,7 +53,9 @@ export default function DisplaySheet() {
           </ul>
         </div>
         <SheetFooter>
-          <SignOutBtn />
+          <SheetClose asChild>
+            <SignOutBtn />
+          </SheetClose>
         </SheetFooter>
       </SheetContent>
     </Sheet>
