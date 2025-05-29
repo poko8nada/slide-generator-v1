@@ -1,4 +1,3 @@
-export const runtime = 'edge'
 import { isAllowedHost } from '@/lib/white-list'
 import { type NextRequest, NextResponse } from 'next/server'
 
