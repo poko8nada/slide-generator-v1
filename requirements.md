@@ -92,14 +92,13 @@
 - ユーザーデータ：ID、表示名、認証情報
 - 型定義はTypeScriptによる定義
 
-### 6.2. ストレージ設計（Cloudflare D1 + Drizzle ORM + NextAuth.js + Cloudflare Images）
-- ストレージにはCloudflare D1（SQLite互換クラウドDB）を利用し、全てのスライド・ユーザーデータを永続化する。
-- ORMには型安全かつマイグレーション管理が容易なDrizzle ORMを採用し、D1との連携・スキーマ管理・DB操作を行う。
+### 6.2. ストレージ設計（Turso + Drizzle ORM + NextAuth.js + Cloudflare Images）
+- ストレージにはTursoを利用し、全てのスライド・ユーザーデータを永続化する。
+- ORMには型安全かつマイグレーション管理が容易なDrizzle ORMを採用し、Tursoとの連携・スキーマ管理・DB操作を行う。
 - 認証にはNextAuth.jsを用い、外部認証プロバイダと連携してユーザー認証を実現する。
-- NextAuth.jsで認証されたユーザー情報（user_id等）をDrizzle ORM経由でD1に保存・参照し、ユーザーごとのデータ分離・認可制御を徹底する。
-- アプリケーションはAPI経由でD1にアクセスし、スライド・ユーザー情報のCRUD操作を行う。
-- データスキーマ例（D1テーブル）：
-- Cloudflare D1のバックアップ・マイグレーション機能およびDrizzleのマイグレーション管理を活用し、運用・拡張性を担保する。
+- NextAuth.jsで認証されたユーザー情報（user_id等）をDrizzle ORM経由でTursoに保存・参照し、ユーザーごとのデータ分離・認可制御を徹底する。
+- アプリケーションはAPI経由、もしくはServerAction経由でアクセスし、スライド・ユーザー情報のCRUD操作を行う。
+- Tursoのバックアップ・マイグレーション機能およびDrizzleのマイグレーション管理を活用し、運用・拡張性を担保する。
 
 #### 画像保存設計（Cloudflare Images）
 - 画像保存にはCloudflare Imagesを利用し、ユーザーがアップロードした画像を最適化・CDN配信する。
