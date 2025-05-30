@@ -9,6 +9,7 @@
 		"hljs",
 		"indexh",
 		"lectus",
+		"libsql",
 		"loermm",
 		"Marp",
 		"mauris",
@@ -19,6 +20,7 @@
 		"slidechanged",
 		"sonner",
 		"Supabase",
+		"TURSO",
 		"usehooks"
 	]
 }
