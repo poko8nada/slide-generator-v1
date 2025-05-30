@@ -10,14 +10,31 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
+import { type Slide, getSlides } from '@/lib/slide-crud'
 import { Menu } from 'lucide-react'
+import type { Session } from 'next-auth'
+import { useEffect, useState } from 'react'
 
-const files = [
-  { name: 'todos.md', updated: '2025/05/27' },
-  { name: 'requirements.md', updated: '2025/05/20' },
-]
+export default function DisplaySheet({ session }: { session: Session }) {
+  const [slides, setSlides] = useState<Slide[]>([])
+  const [loading, setLoading] = useState(true)
 
-export default function DisplaySheet() {
+  useEffect(() => {
+    console.log('[DisplaySheet] session:', session)
+    let ignore = false
+    getSlides(session)
+      .then(data => {
+        console.log('[DisplaySheet] getSlides result:', data)
+        if (!ignore) setSlides(data)
+      })
+      .finally(() => {
+        if (!ignore) setLoading(false)
+      })
+    return () => {
+      ignore = true
+    }
+  }, [session])
+
   return (
     <Sheet>
       <SheetTrigger
@@ -28,10 +45,8 @@ export default function DisplaySheet() {
       </SheetTrigger>
       <SheetContent side='left'>
         <SheetHeader>
-          <SheetTitle>Edit profile</SheetTitle>
-          <SheetDescription>
-            Make changes to your profile here. Click save when you're done.
-          </SheetDescription>
+          <SheetTitle>スライド一覧</SheetTitle>
+          <SheetDescription>Markdownスライドを一覧表示します</SheetDescription>
         </SheetHeader>
         <div className='mt-4'>
           <div className='grid grid-cols-2 gap-x-4 px-4 py-2 font-semibold text-sm text-gray-500 border-b'>
@@ -39,17 +54,25 @@ export default function DisplaySheet() {
             <span className='text-right'>最終更新日</span>
           </div>
           <ul>
-            {files.map(f => (
-              <li
-                key={f.name}
-                className='grid grid-cols-2 gap-x-4 px-4 py-2 border-b last:border-b-0 items-center'
-              >
-                <span className='truncate'>{f.name}</span>
-                <span className='text-right text-sm text-gray-400'>
-                  {f.updated}
-                </span>
-              </li>
-            ))}
+            {loading ? (
+              <li>読み込み中...</li>
+            ) : slides.length === 0 ? (
+              <li>スライドがありません</li>
+            ) : (
+              slides.map(slide => (
+                <li
+                  key={slide.id}
+                  className='flex justify-between px-4 py-2 border-b'
+                >
+                  <span>{slide.title ?? '無題'}</span>
+                  <span className='text-right'>
+                    {slide.updatedAt
+                      ? new Date(slide.updatedAt).toLocaleString()
+                      : '-'}
+                  </span>
+                </li>
+              ))
+            )}
           </ul>
         </div>
         <SheetFooter>

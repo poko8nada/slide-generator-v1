@@ -11,7 +11,7 @@ export default async function Page() {
     <>
       <GeneralHeader>
         <div className='flex items-center gap-2'>
-          {session && <DisplaySheet />}
+          {session && <DisplaySheet session={session} />}
           <HeaderLogo />
         </div>
         <ControlUserAction session={session} />
