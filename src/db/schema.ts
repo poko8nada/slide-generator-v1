@@ -31,6 +31,16 @@ const client = createClient({
   authToken: process.env.TURSO_AUTH_TOKEN as string,
 })
 export const db = drizzle(client)
+// スライドテーブル定義
+export const slides = sqliteTable('slide', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  title: text('title').notNull(),
+  body: text('body').notNull(),
+  createdAt: integer('createdAt', { mode: 'timestamp_ms' }).notNull(),
+  updatedAt: integer('updatedAt', { mode: 'timestamp_ms' }).notNull(),
+})
 
 export const users = sqliteTable('user', {
   id: text('id')
