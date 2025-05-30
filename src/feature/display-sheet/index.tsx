@@ -2,7 +2,6 @@
 import { SignOutBtn } from '@/components/ui/auth-btn'
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
   SheetFooter,
@@ -10,9 +9,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
+import { handleSignOut } from '@/lib/handle-auth'
 import { type Slide, getSlides } from '@/lib/slide-crud'
 import { Menu } from 'lucide-react'
 import type { Session } from 'next-auth'
+import Form from 'next/form'
 import { useEffect, useState } from 'react'
 
 export default function DisplaySheet({ session }: { session: Session }) {
@@ -76,9 +77,9 @@ export default function DisplaySheet({ session }: { session: Session }) {
           </ul>
         </div>
         <SheetFooter>
-          <SheetClose asChild>
+          <Form action={handleSignOut} className='w-full text-right'>
             <SignOutBtn />
-          </SheetClose>
+          </Form>
         </SheetFooter>
       </SheetContent>
     </Sheet>

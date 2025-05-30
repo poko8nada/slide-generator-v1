@@ -3,12 +3,12 @@ import CustomButton from '@/components/custom-button'
 import { toastError, toastSuccess } from '@/components/custom-toast'
 import { SignInBtn, SignOutBtn } from '@/components/ui/auth-btn'
 import UserProfile from '@/components/user-profile'
+import { handleSignIn, handleSignOut } from '@/lib/handle-auth'
 import { useSlideSnap } from '@/providers/slide-snap-provider'
 import { Download } from 'lucide-react'
 import type { Session } from 'next-auth'
 import Form from 'next/form'
 import { useState } from 'react'
-import { handleSignIn, handleSignOut } from './handleAuthAction'
 import { pdfDownload } from './pdfDownload'
 
 export default function ControlUserAction({
