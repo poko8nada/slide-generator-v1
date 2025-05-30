@@ -36,6 +36,9 @@ export const slides = sqliteTable('slide', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
+  userId: text('userId')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
   body: text('body').notNull(),
   createdAt: integer('createdAt', { mode: 'timestamp_ms' }).notNull(),
