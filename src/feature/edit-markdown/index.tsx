@@ -1,8 +1,10 @@
 'use client'
 import MarkdownEditor from '@/components/markdown-editor'
+import { getSlides } from '@/lib/slide-crud'
 import { cn } from '@/lib/utils'
 import { useMdData } from '@/providers/md-data-provider'
-import { useMemo, useRef } from 'react'
+import type { Session } from 'next-auth'
+import { useEffect, useMemo, useRef } from 'react'
 import type { SimpleMDEReactProps } from 'react-simplemde-editor'
 import {
   clearAction,
@@ -11,11 +13,21 @@ import {
 } from './markdownAction'
 import useMde from './useMde'
 
-export default function EditMarkdown() {
+export default function EditMarkdown({ session }: { session: Session | null }) {
   const { mdData, setMdData, setActiveSlideIndex } = useMdData()
   const mdeRef = useRef<{ getMdeInstance: () => EasyMDE } | null>(null)
 
   useMde(mdData, mdeRef, setActiveSlideIndex)
+
+  useEffect(() => {
+    if (!session) return
+    const fetchSlides = async () => {
+      const slides = await getSlides(session)
+      const initialSlide = slides[0]
+      if (initialSlide) setMdData(initialSlide.body)
+    }
+    fetchSlides()
+  }, [session, setMdData])
 
   const options: SimpleMDEReactProps['options'] = useMemo(
     () => ({
