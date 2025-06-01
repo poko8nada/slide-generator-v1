@@ -131,16 +131,18 @@ export function useRevealInit(
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
   styleRef: RefObject<HTMLStyleElement | null>,
 ) {
-  // refはuseEffectの依存配列に含めなくてよい
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  // Reveal.js多重初期化防止・StrictMode対応
+  // biome-ignore lint/correctness/useExhaustiveDependencies: ref, setLoading, styleRef, revealRefは安定参照のため依存配列から除外
   useEffect(() => {
-    if (revealRef.current) return
+    let isMounted = true
+    let isRevealInitialized = false
+
     const init = async () => {
       try {
-        if (!containerRef.current) return
+        if (!containerRef.current || revealRef.current) return
 
         const Reveal = (await import('reveal.js')).default
-        revealRef.current = new Reveal(containerRef.current, {
+        const revealInstance = new Reveal(containerRef.current, {
           embedded: true,
           autoSlide: false,
           transition: 'slide',
@@ -152,10 +154,15 @@ export function useRevealInit(
           scrollActivationWidth: 0,
         })
 
+        revealRef.current = revealInstance
+        isRevealInitialized = true
+
         const slides = await getSlides(mdData)
+        if (!isMounted) return
         setSlides(slides, slidesRef, revealRef, 0)
 
         await revealRef.current.initialize()
+        if (!isMounted) return
 
         fixImageHeight(slidesRef, styleRef)
         updateSlides(activeSlideIndex, revealRef)
@@ -163,24 +170,29 @@ export function useRevealInit(
         console.log('Reveal.js initialized.')
         setLoading(false)
       } catch (error) {
-        throw new Error(`Initialization error: ${error}`)
+        if (isMounted) {
+          // エラーは初期化済みフラグをリセット
+          if (isRevealInitialized && revealRef.current) {
+            revealRef.current.destroy()
+            revealRef.current = null
+          }
+          throw new Error(`Initialization error: ${error}`)
+        }
       }
     }
 
     init()
-  }, [mdData])
 
-  // refはuseEffectの依存配列に含めなくてよい
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
     return () => {
-      // クリーンアップ
+      isMounted = false
       if (revealRef.current) {
         revealRef.current.destroy()
         revealRef.current = null
       }
     }
-  }, [])
+    // mdData, containerRef, revealRef, slidesRef, styleRef, setLoading, activeSlideIndex依存
+    // ただしrefは安定参照のため依存配列から除外
+  }, [mdData, activeSlideIndex])
 }
 
 export function useRevealUpdate(
