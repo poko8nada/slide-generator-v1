@@ -22,7 +22,7 @@ export default function DisplaySlide() {
   const [loading, setLoading] = useState(true)
 
   useRevealInit(
-    mdData,
+    mdData.body,
     slidesRef,
     activeSlideIndex,
     containerRef,
@@ -30,7 +30,7 @@ export default function DisplaySlide() {
     setLoading,
     styleRef,
   )
-  useRevealUpdate(mdData, slidesRef, activeSlideIndex, revealRef, styleRef)
+  useRevealUpdate(mdData.body, slidesRef, activeSlideIndex, revealRef, styleRef)
   return (
     <>
       {/* <style>{layoutStyleString}</style> */}

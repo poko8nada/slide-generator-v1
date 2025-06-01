@@ -1,3 +1,4 @@
+'use client'
 import { LogIn, LogOut } from 'lucide-react'
 import { useFormStatus } from 'react-dom'
 import CustomButton from '../custom-button'

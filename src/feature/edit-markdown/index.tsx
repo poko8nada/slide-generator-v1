@@ -1,9 +1,9 @@
 'use client'
+import CustomButton from '@/components/custom-button'
 import MarkdownEditor from '@/components/markdown-editor'
-import { getSlides } from '@/lib/slide-crud'
+import type { Slide } from '@/lib/slide-crud'
 import { cn } from '@/lib/utils'
-import { useMdData } from '@/providers/md-data-provider'
-import type { Session } from 'next-auth'
+import { initialMarketingBody, useMdData } from '@/providers/md-data-provider'
 import { useEffect, useMemo, useRef } from 'react'
 import type { SimpleMDEReactProps } from 'react-simplemde-editor'
 import {
@@ -13,21 +13,32 @@ import {
 } from './markdownAction'
 import useMde from './useMde'
 
-export default function EditMarkdown({ session }: { session: Session | null }) {
-  const { mdData, setMdData, setActiveSlideIndex } = useMdData()
+export default function EditMarkdown({
+  initialSlide,
+}: {
+  initialSlide: Slide | null
+}) {
+  const { mdData, updateMdBody, setActiveSlideIndex } = useMdData()
   const mdeRef = useRef<{ getMdeInstance: () => EasyMDE } | null>(null)
 
-  useMde(mdData, mdeRef, setActiveSlideIndex)
+  useMde(mdData.body, mdeRef, setActiveSlideIndex)
 
+  // 初回レンダリング時に初期値をセット
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (!session) return
-    const fetchSlides = async () => {
-      const slides = await getSlides(session)
-      const initialSlide = slides[0]
-      if (initialSlide) setMdData(initialSlide.body)
+    if (!initialSlide) {
+      updateMdBody(initialMarketingBody)
+    } else {
+      updateMdBody(initialSlide.body)
     }
-    fetchSlides()
-  }, [session, setMdData])
+  }, [initialSlide])
+
+  // const [originalMdData, _setOriginalMdData] = useState(mdData)
+  // const [_isSaving, _setIsSaving] = useState(false)
+
+  // const hasChanged = mdData !== originalMdData
+
+  // console.log(`hasChanged ${hasChanged}`)
 
   const options: SimpleMDEReactProps['options'] = useMemo(
     () => ({
@@ -83,11 +94,14 @@ export default function EditMarkdown({ session }: { session: Session | null }) {
       )}
     >
       <MarkdownEditor
-        mdData={mdData}
-        setMdData={setMdData}
+        mdDataBody={mdData.body}
+        updateMdBody={updateMdBody}
         options={options}
         mdeRef={mdeRef}
       />
+      {mdeRef.current && (
+        <CustomButton className='absolute top-2 right-2'>save</CustomButton>
+      )}
     </div>
   )
 }

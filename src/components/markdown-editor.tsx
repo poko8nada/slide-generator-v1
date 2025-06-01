@@ -11,20 +11,20 @@ const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
 })
 
 export default function MarkdownEditor({
-  mdData,
-  setMdData,
+  mdDataBody,
+  updateMdBody,
   options,
   mdeRef,
 }: {
-  mdData: string
-  setMdData: React.Dispatch<React.SetStateAction<string>>
+  mdDataBody: string
+  updateMdBody: (body: string) => void
   options?: SimpleMDEReactProps['options']
   mdeRef: React.RefObject<{ getMdeInstance: () => EasyMDE } | null>
 }) {
   return (
     <SimpleMDE
-      value={mdData}
-      onChange={setMdData}
+      value={mdDataBody}
+      onChange={updateMdBody}
       options={options}
       getMdeInstance={instance => {
         mdeRef.current = { getMdeInstance: () => instance }

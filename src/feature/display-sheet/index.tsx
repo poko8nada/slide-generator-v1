@@ -1,4 +1,3 @@
-'use client'
 import { SignOutBtn } from '@/components/ui/auth-btn'
 import {
   Sheet,
@@ -10,32 +9,11 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { handleSignOut } from '@/lib/handle-auth'
-import { type Slide, getSlides } from '@/lib/slide-crud'
+import type { Slide } from '@/lib/slide-crud'
 import { Menu } from 'lucide-react'
-import type { Session } from 'next-auth'
 import Form from 'next/form'
-import { useEffect, useState } from 'react'
 
-export default function DisplaySheet({ session }: { session: Session }) {
-  const [slides, setSlides] = useState<Slide[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    console.log('[DisplaySheet] session:', session)
-    let ignore = false
-    getSlides(session)
-      .then(data => {
-        console.log('[DisplaySheet] getSlides result:', data)
-        if (!ignore) setSlides(data)
-      })
-      .finally(() => {
-        if (!ignore) setLoading(false)
-      })
-    return () => {
-      ignore = true
-    }
-  }, [session])
-
+export default function DisplaySheet({ slides }: { slides: Slide[] }) {
   return (
     <Sheet>
       <SheetTrigger
@@ -55,25 +33,19 @@ export default function DisplaySheet({ session }: { session: Session }) {
             <span className='text-right'>最終更新日</span>
           </div>
           <ul>
-            {loading ? (
-              <li>読み込み中...</li>
-            ) : slides.length === 0 ? (
-              <li>スライドがありません</li>
-            ) : (
-              slides.map(slide => (
-                <li
-                  key={slide.id}
-                  className='flex justify-between px-4 py-2 border-b'
-                >
-                  <span>{slide.title ?? '無題'}</span>
-                  <span className='text-right'>
-                    {slide.updatedAt
-                      ? new Date(slide.updatedAt).toLocaleString()
-                      : '-'}
-                  </span>
-                </li>
-              ))
-            )}
+            {slides.map(slide => (
+              <li
+                key={slide.id}
+                className='flex justify-between px-4 py-2 border-b'
+              >
+                <span>{slide.title ?? '無題'}</span>
+                <span className='text-right'>
+                  {slide.updatedAt
+                    ? new Date(slide.updatedAt).toLocaleString()
+                    : '-'}
+                </span>
+              </li>
+            ))}
           </ul>
         </div>
         <SheetFooter>

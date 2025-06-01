@@ -1,7 +1,22 @@
 import type React from 'react'
-import { type ReactNode, createContext, useContext, useState } from 'react'
+import {
+  type ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+} from 'react'
 
-const initialMdData = `# 📚マークダウンで
+// 型定義
+export type Slide = {
+  slideId: string
+  title: string
+  body: string
+  createdAt: string
+  updatedAt: string
+}
+
+export const initialMarketingBody = `# 📚マークダウンで
 # 簡単スライド作成
 ---
 
@@ -120,11 +135,22 @@ console.log(result);
 - バージョン: ver 0.5.0
 `
 
-// Create the context
+const today = new Date().toISOString()
+
+const initialMdData: Slide = {
+  slideId: 'example_0001',
+  title: '📚マークダウンで簡単スライド作成',
+  body: '',
+  createdAt: today,
+  updatedAt: today,
+}
+
+// コンテキスト定義
 const MdDataContext = createContext<
   | {
-      mdData: string
-      setMdData: React.Dispatch<React.SetStateAction<string>>
+      mdData: Slide
+      updateMdData: (data: Slide) => void
+      updateMdBody: (body: string) => void
       activeSlideIndex: number
       setActiveSlideIndex: React.Dispatch<React.SetStateAction<number>>
     }
@@ -133,19 +159,32 @@ const MdDataContext = createContext<
 
 // Provider component
 export const MdDataProvider = ({ children }: { children: ReactNode }) => {
-  const [mdData, setMdData] = useState<string>(initialMdData)
-  const [activeSlideIndex, setActiveSlideIndex] = useState(0) // 編集中のスライド
+  const [mdData, setMdData] = useState<Slide>(initialMdData)
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0)
+
+  const updateMdData = (data: Slide) => {
+    setMdData(data)
+  }
+  const updateMdBody = useCallback((body: string) => {
+    setMdData(prev => ({ ...prev, body }))
+  }, [])
 
   return (
     <MdDataContext.Provider
-      value={{ mdData, setMdData, activeSlideIndex, setActiveSlideIndex }}
+      value={{
+        mdData,
+        updateMdData,
+        updateMdBody,
+        activeSlideIndex,
+        setActiveSlideIndex,
+      }}
     >
       {children}
     </MdDataContext.Provider>
   )
 }
 
-// Custom hook to use the context
+// カスタムフック
 export const useMdData = () => {
   const context = useContext(MdDataContext)
   if (!context) {
