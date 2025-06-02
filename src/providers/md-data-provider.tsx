@@ -12,8 +12,8 @@ export type Slide = {
   slideId: string
   title: string
   body: string
-  createdAt: string
-  updatedAt: string
+  createdAt: Date
+  updatedAt: Date
 }
 
 export const initialMarketingBody = `# 📚マークダウンで
@@ -135,7 +135,7 @@ console.log(result);
 - バージョン: ver 0.5.0
 `
 
-const today = new Date().toISOString()
+const today = new Date()
 
 const initialMdData: Slide = {
   slideId: 'example_0001',
