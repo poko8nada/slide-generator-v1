@@ -21,8 +21,10 @@ export default function DisplaySlide() {
 
   const [loading, setLoading] = useState(true)
 
+  const initMdData = mdData.body
+
   useRevealInit(
-    mdData.body,
+    initMdData,
     slidesRef,
     activeSlideIndex,
     containerRef,
