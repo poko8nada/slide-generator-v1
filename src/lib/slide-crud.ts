@@ -54,7 +54,7 @@ export const getSlides = unstable_cache(
 )
 
 export async function updateSlide(
-  slideId: number,
+  id: number,
   body: string,
   session: Session | null,
 ) {
@@ -66,7 +66,7 @@ export async function updateSlide(
     await db
       .update(slides)
       .set({ body })
-      .where(eq(slides.id, String(slideId)))
+      .where(eq(slides.id, String(id)))
   } catch (e) {
     console.log('[updateSlide] error:', e)
   }

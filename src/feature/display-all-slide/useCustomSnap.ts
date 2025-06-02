@@ -37,7 +37,7 @@ export function useCustomSnap(
       setSlideSnap(newSlides)
       setSnapMdData(mdData)
       setIsLoading(false)
-    }, 1500)
+    }, 700)
 
     return () => clearTimeout(timer)
   }, [mdData, setSlideSnap, snapMdData])

@@ -13,7 +13,7 @@ export default function DisplayAllSlide() {
   const { slideSnap, setSlideSnap } = useSlideSnap()
   const [isLoading, setIsLoading] = useState(true)
 
-  useCustomSnap(mdData, revealRef, setSlideSnap, setIsLoading)
+  useCustomSnap(mdData.body, revealRef, setSlideSnap, setIsLoading)
 
   return (
     <div className='reveal-print'>

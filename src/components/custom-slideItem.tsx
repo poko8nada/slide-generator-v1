@@ -16,11 +16,11 @@ export default function CustomSlideItem({
     <li
       className='flex items-center'
       onClick={() => {
-        updateMdData({ slideId: id, title, body, createdAt, updatedAt })
+        updateMdData(slide)
       }}
       onKeyDown={e => {
         if (e.key === 'Enter' || e.key === ' ') {
-          updateMdData({ slideId: id, title, body, createdAt, updatedAt })
+          updateMdData(slide)
         }
       }}
     >
