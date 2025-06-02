@@ -16,13 +16,11 @@ export default function CustomSlideItem({
     <li
       className='flex items-center'
       onClick={() => {
-        const now = new Date()
-        updateMdData({ slideId: id, title, body, createdAt, updatedAt: now })
+        updateMdData({ slideId: id, title, body, createdAt, updatedAt })
       }}
       onKeyDown={e => {
-        const now = new Date()
         if (e.key === 'Enter' || e.key === ' ') {
-          updateMdData({ slideId: id, title, body, createdAt, updatedAt: now })
+          updateMdData({ slideId: id, title, body, createdAt, updatedAt })
         }
       }}
     >
@@ -44,7 +42,7 @@ export default function CustomSlideItem({
         </p>
       </Label>
 
-      <div className='sr-only'>{body}</div>
+      {/* <div className='sr-only'>{body}</div> */}
     </li>
   )
 }
