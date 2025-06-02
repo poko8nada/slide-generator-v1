@@ -3,7 +3,10 @@ import { Label } from '@/components/ui/label'
 import type { Slide } from '@/lib/slide-crud'
 import { useMdData } from '@/providers/md-data-provider'
 
-export default function CustomSlideItem({ slide }: { slide: Slide }) {
+export default function CustomSlideItem({
+  slide,
+  defaultChecked,
+}: { slide: Slide; defaultChecked: boolean }) {
   if (!slide) return null
 
   const { updateMdData } = useMdData()
@@ -33,6 +36,7 @@ export default function CustomSlideItem({ slide }: { slide: Slide }) {
           id={id}
           name='allSlide'
           className='sr-only'
+          defaultChecked={defaultChecked}
         />
         <p>{title ?? '無題'}</p>
         <p className='text-right text-sm text-muted-foreground'>

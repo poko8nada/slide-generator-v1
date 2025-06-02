@@ -11,8 +11,12 @@ export default function DisplaySlideItemOnSheet({
         <span className='text-right'>最終更新日</span>
       </div>
       <div>
-        {slides.map(slide => (
-          <CustomSlideItem key={slide.id} slide={slide} />
+        {slides.map((slide, index) => (
+          <CustomSlideItem
+            key={slide.id}
+            slide={slide}
+            defaultChecked={index === 0}
+          />
         ))}
       </div>
     </div>
