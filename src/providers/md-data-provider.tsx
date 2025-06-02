@@ -1,3 +1,4 @@
+import type { Slide } from '@/lib/slide-crud'
 import type React from 'react'
 import {
   type ReactNode,
@@ -6,15 +7,6 @@ import {
   useContext,
   useState,
 } from 'react'
-
-// 型定義
-export type Slide = {
-  slideId: string
-  title: string
-  body: string
-  createdAt: Date
-  updatedAt: Date
-}
 
 export const initialMarketingBody = `# 📚マークダウンで
 # 簡単スライド作成
@@ -137,8 +129,10 @@ console.log(result);
 
 const today = new Date()
 
-const initialMdData: Slide = {
-  slideId: 'example_0001',
+type SlideWithoutUserId = Omit<Slide, 'userId'>
+
+const initialMdData: SlideWithoutUserId = {
+  id: 'example_0001',
   title: '📚マークダウンで簡単スライド作成',
   body: '',
   createdAt: today,
@@ -148,7 +142,7 @@ const initialMdData: Slide = {
 // コンテキスト定義
 const MdDataContext = createContext<
   | {
-      mdData: Slide
+      mdData: SlideWithoutUserId
       updateMdData: (data: Slide) => void
       updateMdBody: (body: string) => void
       activeSlideIndex: number
@@ -159,7 +153,7 @@ const MdDataContext = createContext<
 
 // Provider component
 export const MdDataProvider = ({ children }: { children: ReactNode }) => {
-  const [mdData, setMdData] = useState<Slide>(initialMdData)
+  const [mdData, setMdData] = useState<SlideWithoutUserId>(initialMdData)
   const [activeSlideIndex, setActiveSlideIndex] = useState(0)
 
   const updateMdData = (data: Slide) => {

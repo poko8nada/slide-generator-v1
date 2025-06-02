@@ -5,13 +5,17 @@ import type { Slide } from '@/lib/slide-crud'
 import { cn } from '@/lib/utils'
 import { initialMarketingBody, useMdData } from '@/providers/md-data-provider'
 import { Save } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef } from 'react'
 import type { SimpleMDEReactProps } from 'react-simplemde-editor'
 import {
   clearAction,
   imageUploadAction,
   imageUploadFunction,
 } from './markdownAction'
+import {
+  useDiffMarkdownEffect,
+  useInitMarkdownEffect,
+} from './useEditMarkdownEffects'
 import useMde from './useMde'
 
 export default function EditMarkdown({
@@ -25,56 +29,16 @@ export default function EditMarkdown({
 
   useMde(mdData.body, mdeRef, setActiveSlideIndex)
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    if (!initialSlide) {
-      updateMdBody(initialMarketingBody)
-    }
-    if (initialSlide) {
-      updateMdData({
-        ...initialSlide,
-        slideId: initialSlide.id,
-      })
-    }
-  }, [initialSlide])
+  // 初期化・スライド切替時の副作用
+  useInitMarkdownEffect(
+    initialSlide,
+    initialMarketingBody,
+    updateMdBody,
+    updateMdData,
+  )
 
-  const [prevData, setPrevData] = useState({
-    slideId: '',
-    body: '',
-  })
-  const [isDiff, setIsDiff] = useState(false)
-
-  useEffect(() => {
-    // 初期化時
-    if (prevData.slideId === '') {
-      setPrevData({
-        slideId: mdData.slideId,
-        body: initialMarketingBody,
-      })
-      return
-    }
-    // スライドが切り替わった場合、diffをfalseにする
-    if (mdData.slideId !== prevData.slideId) {
-      setIsDiff(false)
-      // 切り替わったスライドのbodyを保存
-      setPrevData({
-        slideId: mdData.slideId,
-        body: mdData.body,
-      })
-      return
-    }
-    const timer = setTimeout(() => {
-      if (mdData.body !== prevData.body && prevData.body !== '') {
-        setIsDiff(true)
-        return
-      }
-      setIsDiff(false)
-    }, 700)
-
-    return () => {
-      clearTimeout(timer)
-    }
-  }, [mdData, prevData])
+  // 差分検知・isDiff管理
+  const { isDiff } = useDiffMarkdownEffect(mdData, initialMarketingBody)
 
   const options: SimpleMDEReactProps['options'] = useMemo(
     () => ({
