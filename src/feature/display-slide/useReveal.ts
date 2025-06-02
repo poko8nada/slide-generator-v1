@@ -123,7 +123,7 @@ function fixImageHeight(
 }
 
 export function useRevealInit(
-  mdData: string,
+  initMdData: string,
   slidesRef: RefObject<HTMLDivElement | null>,
   activeSlideIndex: number,
   containerRef: RefObject<HTMLDivElement | null>,
@@ -131,18 +131,24 @@ export function useRevealInit(
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
   styleRef: RefObject<HTMLStyleElement | null>,
 ) {
-  // Reveal.js多重初期化防止・StrictMode対応
-  // biome-ignore lint/correctness/useExhaustiveDependencies: ref, setLoading, styleRef, revealRefは安定参照のため依存配列から除外
+  // refはuseEffectの依存配列に含めなくてよい
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    let isMounted = true
-    let isRevealInitialized = false
-
+    // initMdDataが空でない場合のみ初期化
+    if (!initMdData) {
+      return
+    }
+    // すでに初期化済みなら再初期化しない
+    if (revealRef.current) {
+      return
+    }
     const init = async () => {
-      try {
-        if (!containerRef.current || revealRef.current) return
+      console.log('Initializing Reveal.js...')
 
-        const Reveal = (await import('reveal.js')).default
-        const revealInstance = new Reveal(containerRef.current, {
+      if (!containerRef.current) return
+      const Reveal = (await import('reveal.js')).default
+      try {
+        revealRef.current = new Reveal(containerRef.current, {
           embedded: true,
           autoSlide: false,
           transition: 'slide',
@@ -154,15 +160,10 @@ export function useRevealInit(
           scrollActivationWidth: 0,
         })
 
-        revealRef.current = revealInstance
-        isRevealInitialized = true
-
-        const slides = await getSlides(mdData)
-        if (!isMounted) return
+        const slides = await getSlides(initMdData)
         setSlides(slides, slidesRef, revealRef, 0)
 
         await revealRef.current.initialize()
-        if (!isMounted) return
 
         fixImageHeight(slidesRef, styleRef)
         updateSlides(activeSlideIndex, revealRef)
@@ -170,29 +171,25 @@ export function useRevealInit(
         console.log('Reveal.js initialized.')
         setLoading(false)
       } catch (error) {
-        if (isMounted) {
-          // エラーは初期化済みフラグをリセット
-          if (isRevealInitialized && revealRef.current) {
-            revealRef.current.destroy()
-            revealRef.current = null
-          }
-          throw new Error(`Initialization error: ${error}`)
-        }
+        throw new Error(`Initialization error: ${error}`)
       }
     }
 
     init()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initMdData])
 
+  // refはuseEffectの依存配列に含めなくてよい
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
     return () => {
-      isMounted = false
+      // クリーンアップ
       if (revealRef.current) {
         revealRef.current.destroy()
         revealRef.current = null
       }
     }
-    // mdData, containerRef, revealRef, slidesRef, styleRef, setLoading, activeSlideIndex依存
-    // ただしrefは安定参照のため依存配列から除外
-  }, [mdData, activeSlideIndex])
+  }, [])
 }
 
 export function useRevealUpdate(
