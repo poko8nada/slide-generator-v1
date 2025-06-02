@@ -1,6 +1,6 @@
 'use server'
 import { db, slides } from '@/db/schema'
-import { eq } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 import type { Session } from 'next-auth'
 import { unstable_cache } from 'next/cache'
 
@@ -39,6 +39,7 @@ export const getSlides = unstable_cache(
         .select()
         .from(slides)
         .where(eq(slides.userId, session.user.id))
+        .orderBy(desc(slides.updatedAt))
       console.log('[getSlides] db result:', result)
       return result
     } catch (e) {

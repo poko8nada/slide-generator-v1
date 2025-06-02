@@ -4,7 +4,8 @@ import MarkdownEditor from '@/components/markdown-editor'
 import type { Slide } from '@/lib/slide-crud'
 import { cn } from '@/lib/utils'
 import { initialMarketingBody, useMdData } from '@/providers/md-data-provider'
-import { useEffect, useMemo, useRef } from 'react'
+import { Save } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { SimpleMDEReactProps } from 'react-simplemde-editor'
 import {
   clearAction,
@@ -18,27 +19,62 @@ export default function EditMarkdown({
 }: {
   initialSlide: Slide | null
 }) {
-  const { mdData, updateMdBody, setActiveSlideIndex } = useMdData()
+  const { mdData, updateMdBody, updateMdData, setActiveSlideIndex } =
+    useMdData()
   const mdeRef = useRef<{ getMdeInstance: () => EasyMDE } | null>(null)
 
   useMde(mdData.body, mdeRef, setActiveSlideIndex)
 
-  // 初回レンダリング時に初期値をセット
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (!initialSlide) {
       updateMdBody(initialMarketingBody)
-    } else {
-      updateMdBody(initialSlide.body)
+    }
+    if (initialSlide) {
+      updateMdData({
+        ...initialSlide,
+        slideId: initialSlide.id,
+      })
     }
   }, [initialSlide])
 
-  // const [originalMdData, _setOriginalMdData] = useState(mdData)
-  // const [_isSaving, _setIsSaving] = useState(false)
+  const [prevData, setPrevData] = useState({
+    slideId: '',
+    body: '',
+  })
+  const [isDiff, setIsDiff] = useState(false)
 
-  // const hasChanged = mdData !== originalMdData
+  useEffect(() => {
+    // 初期化時
+    if (prevData.slideId === '') {
+      setPrevData({
+        slideId: mdData.slideId,
+        body: initialMarketingBody,
+      })
+      return
+    }
+    // スライドが切り替わった場合、diffをfalseにする
+    if (mdData.slideId !== prevData.slideId) {
+      setIsDiff(false)
+      // 切り替わったスライドのbodyを保存
+      setPrevData({
+        slideId: mdData.slideId,
+        body: mdData.body,
+      })
+      return
+    }
+    const timer = setTimeout(() => {
+      if (mdData.body !== prevData.body && prevData.body !== '') {
+        setIsDiff(true)
+        return
+      }
+      setIsDiff(false)
+    }, 700)
 
-  // console.log(`hasChanged ${hasChanged}`)
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [mdData, prevData])
 
   const options: SimpleMDEReactProps['options'] = useMemo(
     () => ({
@@ -99,8 +135,10 @@ export default function EditMarkdown({
         options={options}
         mdeRef={mdeRef}
       />
-      {mdeRef.current && (
-        <CustomButton className='absolute top-2 right-2'>save</CustomButton>
+      {initialSlide && (
+        <CustomButton className='absolute top-2 right-2' disabled={!isDiff}>
+          <Save /> save
+        </CustomButton>
       )}
     </div>
   )
