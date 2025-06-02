@@ -3,6 +3,7 @@ import GeneralHeader from '@/components/general-header'
 import HeaderLogo from '@/components/header-logo'
 import ControlUserAction from '@/feature/control-user-action'
 import DisplaySheet from '@/feature/display-sheet'
+import DisplaySlideItemOnSheet from '@/feature/display-slideItem-onSheet'
 import { type Slide, getSlides } from '@/lib/slide-crud'
 
 export default async function Page() {
@@ -13,7 +14,11 @@ export default async function Page() {
     <>
       <GeneralHeader>
         <div className='flex items-center gap-2'>
-          {session && <DisplaySheet slides={slides} />}
+          {session && (
+            <DisplaySheet>
+              <DisplaySlideItemOnSheet slides={slides} />
+            </DisplaySheet>
+          )}
           <HeaderLogo />
         </div>
         <ControlUserAction session={session} />
