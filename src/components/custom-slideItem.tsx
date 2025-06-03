@@ -2,6 +2,7 @@
 import { Label } from '@/components/ui/label'
 import type { Slide } from '@/lib/slide-crud'
 import { useMdData } from '@/providers/md-data-provider'
+import { confirmUnsaved } from '@/lib/unsaved-warning'
 
 export default function CustomSlideItem({
   slide,
@@ -9,17 +10,18 @@ export default function CustomSlideItem({
 }: { slide: Slide; defaultChecked: boolean }) {
   if (!slide) return null
 
-  const { updateMdData } = useMdData()
+  const { updateMdData, isDiff } = useMdData()
   const { id, title, body, createdAt, updatedAt } = slide
 
   return (
     <li
       className='flex items-center'
       onClick={() => {
+        if (!confirmUnsaved(isDiff)) return
         updateMdData(slide)
       }}
       onKeyDown={e => {
-        if (e.key === 'Enter' || e.key === ' ') {
+        if ((e.key === 'Enter' || e.key === ' ') && confirmUnsaved(isDiff)) {
           updateMdData(slide)
         }
       }}

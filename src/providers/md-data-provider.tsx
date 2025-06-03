@@ -7,6 +7,10 @@ import {
   useContext,
   useState,
 } from 'react'
+import {
+  useUnsavedBeforeUnload,
+  useUnsavedRouteChange,
+} from '@/lib/unsaved-warning'
 
 export const initialMarketingBody = `# 📚マークダウンで
 # 簡単スライド作成
@@ -158,6 +162,9 @@ export const MdDataProvider = ({ children }: { children: ReactNode }) => {
   const [mdData, setMdData] = useState<SlideWithoutUserId>(initialMdData)
   const [activeSlideIndex, setActiveSlideIndex] = useState(0)
   const [isDiff, setIsDiff] = useState(false)
+
+  useUnsavedBeforeUnload(isDiff)
+  useUnsavedRouteChange(isDiff)
 
   const updateMdData = (data: Slide) => {
     setMdData(data)
