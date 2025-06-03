@@ -147,6 +147,8 @@ const MdDataContext = createContext<
       updateMdBody: (body: string) => void
       activeSlideIndex: number
       setActiveSlideIndex: React.Dispatch<React.SetStateAction<number>>
+      isDiff: boolean
+      setIsDiff: React.Dispatch<React.SetStateAction<boolean>>
     }
   | undefined
 >(undefined)
@@ -155,6 +157,7 @@ const MdDataContext = createContext<
 export const MdDataProvider = ({ children }: { children: ReactNode }) => {
   const [mdData, setMdData] = useState<SlideWithoutUserId>(initialMdData)
   const [activeSlideIndex, setActiveSlideIndex] = useState(0)
+  const [isDiff, setIsDiff] = useState(false)
 
   const updateMdData = (data: Slide) => {
     setMdData(data)
@@ -171,6 +174,8 @@ export const MdDataProvider = ({ children }: { children: ReactNode }) => {
         updateMdBody,
         activeSlideIndex,
         setActiveSlideIndex,
+        isDiff,
+        setIsDiff,
       }}
     >
       {children}

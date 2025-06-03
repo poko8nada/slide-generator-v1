@@ -23,8 +23,14 @@ export default function EditMarkdown({
 }: {
   initialSlide: Slide | null
 }) {
-  const { mdData, updateMdBody, updateMdData, setActiveSlideIndex } =
-    useMdData()
+  const {
+    mdData,
+    updateMdBody,
+    updateMdData,
+    setActiveSlideIndex,
+    isDiff,
+    setIsDiff,
+  } = useMdData()
   const mdeRef = useRef<{ getMdeInstance: () => EasyMDE } | null>(null)
 
   useMde(mdData.body, mdeRef, setActiveSlideIndex)
@@ -37,8 +43,7 @@ export default function EditMarkdown({
     updateMdData,
   )
 
-  // 差分検知・isDiff管理
-  const { isDiff } = useDiffMarkdownEffect(mdData, initialMarketingBody)
+  useDiffMarkdownEffect(mdData, initialMarketingBody, setIsDiff)
 
   const options: SimpleMDEReactProps['options'] = useMemo(
     () => ({

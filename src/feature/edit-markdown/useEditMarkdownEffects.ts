@@ -23,12 +23,12 @@ export function useInitMarkdownEffect(
 export function useDiffMarkdownEffect(
   mdData: { id: string; body: string },
   initialMarketingBody: string,
+  setIsDiff: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
   const [prevData, setPrevData] = useState({
     id: '',
     body: '',
   })
-  const [isDiff, setIsDiff] = useState(false)
 
   useEffect(() => {
     // 初期化時
@@ -60,7 +60,5 @@ export function useDiffMarkdownEffect(
     return () => {
       clearTimeout(timer)
     }
-  }, [mdData, prevData, initialMarketingBody])
-
-  return { isDiff }
+  }, [mdData, prevData, initialMarketingBody, setIsDiff])
 }
