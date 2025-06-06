@@ -1,4 +1,3 @@
-import { useRouter } from 'next/navigation'
 // 保存警告アラート共通ロジック
 import { useEffect } from 'react'
 
@@ -9,6 +8,8 @@ export function useUnsavedBeforeUnload(isDiff: boolean) {
 
     const handler = (e: BeforeUnloadEvent) => {
       e.preventDefault()
+      // ブラウザに「ページを離れる前の確認ダイアログ」を表示するよう指示
+      // returnValueに空文字列を設定することで、ブラウザの標準確認ダイアログが表示される
       e.returnValue = ''
     }
     window.addEventListener('beforeunload', handler)
@@ -20,23 +21,15 @@ export function useUnsavedBeforeUnload(isDiff: boolean) {
 
 // Next.js内部遷移時の警告
 export function useUnsavedRouteChange(isDiff: boolean) {
-  const router = useRouter()
-
   useEffect(() => {
     if (!isDiff) return
 
-    const handleRouteChange = (url: string) => {
-      if (window.confirm('保存されていない変更があります。移動しますか？')) {
-        // OKなら何もしない
-      } else {
-        // キャンセル時は遷移を止める
-        throw 'Route change aborted by user'
-      }
-    }
-
-    // next/navigationのrouter.eventsは使えないため、history APIを監視
+    // Next.jsのApp Routerでは公式なルート遷移イベントが使えないため、
+    // ブラウザのhistory.pushStateを一時的に上書きしてページ遷移を監視する
+    // pushStateの元の関数を退避し、下で上書きする
     const pushState = history.pushState
     history.pushState = function (...args) {
+      // isDiffがtrueかつユーザーがキャンセルした場合は遷移を止める
       if (
         isDiff &&
         !window.confirm('保存されていない変更があります。移動しますか？')
@@ -47,6 +40,7 @@ export function useUnsavedRouteChange(isDiff: boolean) {
       return pushState.apply(this, args)
     }
 
+    // クリーンアップ時に元のpushStateに戻す
     return () => {
       history.pushState = pushState
     }
