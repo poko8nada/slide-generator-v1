@@ -1,3 +1,4 @@
+'use client'
 import type { Slide } from '@/lib/slide-crud'
 import type React from 'react'
 import {
@@ -158,13 +159,21 @@ const MdDataContext = createContext<
 >(undefined)
 
 // Provider component
-export const MdDataProvider = ({ children }: { children: ReactNode }) => {
+export const MdDataProvider = ({
+  children,
+  isLoggedIn,
+}: {
+  children: ReactNode
+  isLoggedIn: boolean
+}) => {
   const [mdData, setMdData] = useState<SlideWithoutUserId>(initialMdData)
   const [activeSlideIndex, setActiveSlideIndex] = useState(0)
   const [isDiff, setIsDiff] = useState(false)
 
-  useUnsavedBeforeUnload(isDiff)
-  useUnsavedRouteChange(isDiff)
+  if (isLoggedIn) {
+    useUnsavedBeforeUnload(isDiff)
+    useUnsavedRouteChange(isDiff)
+  }
 
   const updateMdData = (data: Slide) => {
     setMdData(data)
