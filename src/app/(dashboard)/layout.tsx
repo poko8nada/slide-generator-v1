@@ -1,14 +1,15 @@
-'use client'
 import Divider from '@/components/divider'
 import { MdDataProvider } from '@/providers/md-data-provider'
 import { SlideContainerProvider } from '@/providers/slide-container-provider'
 import { SlideSnapProvider } from '@/providers/slide-snap-provider'
+import { auth } from '@/auth'
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
   markdown,
   slide,
   header,
+  sheet,
 }: {
   children: React.ReactNode
   markdown: React.ReactNode
@@ -16,9 +17,10 @@ export default function DashboardLayout({
   header: React.ReactNode
   sheet: React.ReactNode
 }) {
+  const session = await auth()
   return (
     <SlideSnapProvider>
-      <MdDataProvider>
+      <MdDataProvider isLoggedIn={!!session}>
         <SlideContainerProvider>
           <div className='sticky top-0 z-50'>{header}</div>
           <main>

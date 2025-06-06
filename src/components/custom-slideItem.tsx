@@ -7,7 +7,8 @@ import { confirmUnsaved } from '@/lib/unsaved-warning'
 export default function CustomSlideItem({
   slide,
   defaultChecked,
-}: { slide: Slide; defaultChecked: boolean }) {
+  isLoggedIn,
+}: { slide: Slide; defaultChecked: boolean; isLoggedIn: boolean }) {
   if (!slide) return null
 
   const { updateMdData, isDiff } = useMdData()
@@ -17,10 +18,20 @@ export default function CustomSlideItem({
     <li
       className='flex items-center'
       onClick={() => {
+        if (!isLoggedIn) {
+          updateMdData(slide)
+          return
+        }
         if (!confirmUnsaved(isDiff)) return
         updateMdData(slide)
       }}
       onKeyDown={e => {
+        if (!isLoggedIn) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            updateMdData(slide)
+          }
+          return
+        }
         if ((e.key === 'Enter' || e.key === ' ') && confirmUnsaved(isDiff)) {
           updateMdData(slide)
         }
