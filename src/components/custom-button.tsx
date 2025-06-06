@@ -1,5 +1,6 @@
 import { LoaderCircle } from 'lucide-react'
 import { Button } from './ui/button'
+import { cn } from '@/lib/utils'
 
 export default function CustomButton({
   onClick,
@@ -34,7 +35,7 @@ export default function CustomButton({
       disabled={isLoading || disabled}
       variant={variant}
       type={type}
-      className={className}
+      className={cn(className, 'cursor-pointer')}
     >
       {isLoading ? <LoaderCircle className='animate-spin' /> : icon}
       {children}

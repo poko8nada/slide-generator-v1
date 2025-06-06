@@ -54,7 +54,7 @@ export const getSlides = unstable_cache(
 )
 
 export async function updateSlide(
-  id: number,
+  id: string,
   body: string,
   session: Session | null,
 ) {

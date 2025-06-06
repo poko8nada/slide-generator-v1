@@ -1,11 +1,9 @@
 'use client'
-import CustomButton from '@/components/custom-button'
 import MarkdownEditor from '@/components/markdown-editor'
 import type { Slide } from '@/lib/slide-crud'
 import { cn } from '@/lib/utils'
 import { initialMarketingBody, useMdData } from '@/providers/md-data-provider'
-import { Save } from 'lucide-react'
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import type { SimpleMDEReactProps } from 'react-simplemde-editor'
 import {
   clearAction,
@@ -17,11 +15,18 @@ import {
   useInitMarkdownEffect,
 } from './useEditMarkdownEffects'
 import useMde from './useMde'
+import CustomButton from '@/components/custom-button'
+import { Save } from 'lucide-react'
+import Form from 'next/form'
+import { updateSlide } from '@/lib/slide-crud'
+import type { Session } from 'next-auth'
 
 export default function EditMarkdown({
   initialSlide,
+  session,
 }: {
   initialSlide: Slide | null
+  session: Session | null
 }) {
   const {
     mdData,
@@ -32,6 +37,7 @@ export default function EditMarkdown({
     setIsDiff,
   } = useMdData()
   const mdeRef = useRef<{ getMdeInstance: () => EasyMDE } | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
 
   useMde(mdData.body, mdeRef, setActiveSlideIndex)
 
@@ -105,9 +111,21 @@ export default function EditMarkdown({
         mdeRef={mdeRef}
       />
       {initialSlide && (
-        <CustomButton className='absolute top-2 right-2' disabled={!isDiff}>
-          <Save /> save
-        </CustomButton>
+        <Form
+          action={async () => {
+            setIsSaving(true)
+            await updateSlide(mdData.id, mdData.body, session)
+            setIsSaving(false)
+          }}
+        >
+          <CustomButton
+            className='absolute top-2 right-2'
+            isLoading={isSaving}
+            disabled={!isDiff}
+          >
+            <Save /> save
+          </CustomButton>
+        </Form>
       )}
     </div>
   )

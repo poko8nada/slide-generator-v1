@@ -12,5 +12,5 @@ export default async function MarkdownPage() {
     initialSlide = null
   }
 
-  return <EditMarkdown initialSlide={initialSlide} />
+  return <EditMarkdown initialSlide={initialSlide} session={session} />
 }
