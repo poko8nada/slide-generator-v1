@@ -3,6 +3,7 @@ import { db, slides } from '@/db/schema'
 import { desc, eq } from 'drizzle-orm'
 import type { Session } from 'next-auth'
 import { unstable_cache } from 'next/cache'
+import { revalidateTag } from 'next/cache'
 
 export type Slide = typeof slides.$inferSelect
 
@@ -60,14 +61,16 @@ export async function updateSlide(
 ) {
   if (!session?.user?.id) {
     console.log('[updateSlide] session.user.id is missing')
-    return
+    throw new Error('ユーザー情報がありません（未ログイン）')
   }
   try {
     await db
       .update(slides)
-      .set({ body })
+      .set({ body, updatedAt: new Date() })
       .where(eq(slides.id, String(id)))
+    revalidateTag('slides')
   } catch (e) {
     console.log('[updateSlide] error:', e)
+    throw e instanceof Error ? e : new Error('スライド保存に失敗しました')
   }
 }

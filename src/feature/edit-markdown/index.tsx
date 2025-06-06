@@ -3,7 +3,7 @@ import MarkdownEditor from '@/components/markdown-editor'
 import type { Slide } from '@/lib/slide-crud'
 import { cn } from '@/lib/utils'
 import { initialMarketingBody, useMdData } from '@/providers/md-data-provider'
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useRef } from 'react'
 import type { SimpleMDEReactProps } from 'react-simplemde-editor'
 import {
   clearAction,
@@ -15,11 +15,12 @@ import {
   useInitMarkdownEffect,
 } from './useEditMarkdownEffects'
 import useMde from './useMde'
-import CustomButton from '@/components/custom-button'
 import { Save } from 'lucide-react'
-import Form from 'next/form'
 import { updateSlide } from '@/lib/slide-crud'
 import type { Session } from 'next-auth'
+import { toastError, toastSuccess } from '@/components/custom-toast'
+import CustomSubmitButton from '@/components/custom-submit-button'
+import Form from 'next/form'
 
 export default function EditMarkdown({
   initialSlide,
@@ -37,7 +38,6 @@ export default function EditMarkdown({
     setIsDiff,
   } = useMdData()
   const mdeRef = useRef<{ getMdeInstance: () => EasyMDE } | null>(null)
-  const [isSaving, setIsSaving] = useState(false)
 
   useMde(mdData.body, mdeRef, setActiveSlideIndex)
 
@@ -113,18 +113,24 @@ export default function EditMarkdown({
       {initialSlide && (
         <Form
           action={async () => {
-            setIsSaving(true)
-            await updateSlide(mdData.id, mdData.body, session)
-            setIsSaving(false)
+            try {
+              await updateSlide(mdData.id, mdData.body, session)
+              setIsDiff(false)
+              toastSuccess('保存しました')
+            } catch (e) {
+              toastError(
+                e instanceof Error ? e : new Error('保存に失敗しました'),
+              )
+            }
           }}
         >
-          <CustomButton
+          <CustomSubmitButton
             className='absolute top-2 right-2'
-            isLoading={isSaving}
             disabled={!isDiff}
+            icon={<Save />}
           >
-            <Save /> save
-          </CustomButton>
+            save
+          </CustomSubmitButton>
         </Form>
       )}
     </div>
