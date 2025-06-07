@@ -170,15 +170,15 @@ export const MdDataProvider = ({
   const [activeSlideIndex, setActiveSlideIndex] = useState(0)
   const [isDiff, setIsDiff] = useState(false)
 
+  useUnsavedBeforeUnload(isDiff, isLoggedIn)
+  useUnsavedRouteChange(isDiff, isLoggedIn)
+
   const updateMdData = (data: Slide) => {
     setMdData(data)
   }
   const updateMdBody = useCallback((body: string) => {
     setMdData(prev => ({ ...prev, body }))
   }, [])
-
-  useUnsavedBeforeUnload(isDiff, isLoggedIn)
-  useUnsavedRouteChange(isDiff, isLoggedIn)
 
   return (
     <MdDataContext.Provider
