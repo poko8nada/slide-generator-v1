@@ -2,9 +2,9 @@
 import { useEffect } from 'react'
 
 // beforeunloadイベント登録
-export function useUnsavedBeforeUnload(isDiff: boolean) {
+export function useUnsavedBeforeUnload(isDiff: boolean, isLoggedIn: boolean) {
   useEffect(() => {
-    if (!isDiff) return
+    if (!isDiff || !isLoggedIn) return
 
     const handler = (e: BeforeUnloadEvent) => {
       e.preventDefault()
@@ -16,13 +16,13 @@ export function useUnsavedBeforeUnload(isDiff: boolean) {
     return () => {
       window.removeEventListener('beforeunload', handler)
     }
-  }, [isDiff])
+  }, [isDiff, isLoggedIn])
 }
 
 // Next.js内部遷移時の警告
-export function useUnsavedRouteChange(isDiff: boolean) {
+export function useUnsavedRouteChange(isDiff: boolean, isLoggedIn: boolean) {
   useEffect(() => {
-    if (!isDiff) return
+    if (!isDiff || !isLoggedIn) return
 
     // Next.jsのApp Routerでは公式なルート遷移イベントが使えないため、
     // ブラウザのhistory.pushStateを一時的に上書きしてページ遷移を監視する
@@ -44,7 +44,7 @@ export function useUnsavedRouteChange(isDiff: boolean) {
     return () => {
       history.pushState = pushState
     }
-  }, [isDiff])
+  }, [isDiff, isLoggedIn])
 }
 
 // confirm用関数
