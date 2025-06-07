@@ -1,4 +1,6 @@
-export function getImageUrl(file: File) {
+import type { SimpleMDEReactProps } from 'react-simplemde-editor'
+
+function getImageUrl(file: File) {
   // Validate file type
   if (!file.type.startsWith('image/')) {
     throw new Error('The provided file is not an image.')
@@ -29,7 +31,7 @@ export function getImageUrl(file: File) {
   return `${objectURL}#.${extension}`
 }
 
-export function imageUploadFunction(
+function imageUploadFunction(
   file: File,
   onSuccess: (url: string) => void,
   onError: (error: string) => void,
@@ -78,4 +80,44 @@ export function imageUploadAction(editor: EasyMDE) {
     }
   }
   input.click()
+}
+
+export const options: SimpleMDEReactProps['options'] = {
+  scrollbarStyle: 'native',
+  spellChecker: false,
+  uploadImage: true,
+  imageUploadFunction,
+  placeholder: 'Type here...',
+  toolbar: [
+    'bold',
+    'italic',
+    'heading',
+    '|',
+    'unordered-list',
+    'ordered-list',
+    'link',
+    'table',
+    'horizontal-rule',
+    '|',
+    'image',
+    {
+      name: 'image-upload',
+      action: (editor: EasyMDE) => {
+        imageUploadAction(editor)
+      },
+      className: 'fa fa-upload',
+      title: 'Upload Image',
+    },
+    '|',
+    {
+      name: 'clear',
+      action: (editor: EasyMDE) => {
+        if (window.confirm('Are you sure you want to clear the content?')) {
+          clearAction(editor)
+        }
+      },
+      className: 'fa fa-trash',
+      title: 'Clear',
+    },
+  ],
 }

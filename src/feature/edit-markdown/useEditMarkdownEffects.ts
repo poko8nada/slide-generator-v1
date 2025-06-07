@@ -24,9 +24,6 @@ export function useUnsavedChanges() {
     body: '',
   })
 
-  console.log('prevData', prevData)
-  console.log('mdData', mdData)
-
   useEffect(() => {
     // 初期化時
     if (prevData.id === '') {
