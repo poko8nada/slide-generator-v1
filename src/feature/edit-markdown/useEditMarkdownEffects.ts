@@ -1,13 +1,10 @@
 import type { Slide } from '@/lib/slide-crud'
 import { useEffect, useState } from 'react'
+import { initialMarketingBody, useMdData } from '@/providers/md-data-provider'
 
 // 初期化・スライド切替時の状態同期
-export function useInitMarkdownEffect(
-  initialSlide: Slide | null,
-  initialMarketingBody: string,
-  updateMdBody: (body: string) => void,
-  updateMdData: (data: Slide) => void,
-) {
+export function useInitialDataSync(initialSlide: Slide | null) {
+  const { updateMdBody, updateMdData } = useMdData()
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (!initialSlide) {
@@ -19,16 +16,16 @@ export function useInitMarkdownEffect(
   }, [initialSlide, initialMarketingBody])
 }
 
-// 差分検知・isDiff管理
-export function useDiffMarkdownEffect(
-  mdData: { id: string; body: string },
-  initialMarketingBody: string,
-  setIsDiff: React.Dispatch<React.SetStateAction<boolean>>,
-) {
+// 未保存の変更があるかどうかを管理、保存完了時の関数を提供
+export function useUnsavedChanges() {
+  const { mdData, setIsDiff } = useMdData()
   const [prevData, setPrevData] = useState({
     id: '',
     body: '',
   })
+
+  console.log('prevData', prevData)
+  console.log('mdData', mdData)
 
   useEffect(() => {
     // 初期化時
@@ -60,5 +57,16 @@ export function useDiffMarkdownEffect(
     return () => {
       clearTimeout(timer)
     }
-  }, [mdData, prevData, initialMarketingBody, setIsDiff])
+  }, [mdData, prevData, setIsDiff])
+
+  // 保存完了時に呼び出すメソッド
+  const markAsSaved = () => {
+    setPrevData({
+      id: mdData.id,
+      body: mdData.body,
+    })
+    setIsDiff(false)
+  }
+
+  return { markAsSaved }
 }

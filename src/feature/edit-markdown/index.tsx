@@ -2,7 +2,7 @@
 import MarkdownEditor from '@/components/markdown-editor'
 import type { Slide } from '@/lib/slide-crud'
 import { cn } from '@/lib/utils'
-import { initialMarketingBody, useMdData } from '@/providers/md-data-provider'
+import { useMdData } from '@/providers/md-data-provider'
 import { useMemo, useRef } from 'react'
 import type { SimpleMDEReactProps } from 'react-simplemde-editor'
 import {
@@ -10,10 +10,7 @@ import {
   imageUploadAction,
   imageUploadFunction,
 } from './markdownAction'
-import {
-  useDiffMarkdownEffect,
-  useInitMarkdownEffect,
-} from './useEditMarkdownEffects'
+import { useUnsavedChanges, useInitialDataSync } from './useEditMarkdownEffects'
 import useMde from './useMde'
 import { Save } from 'lucide-react'
 import { updateSlide } from '@/lib/slide-crud'
@@ -29,27 +26,12 @@ export default function EditMarkdown({
   initialSlide: Slide | null
   session: Session | null
 }) {
-  const {
-    mdData,
-    updateMdBody,
-    updateMdData,
-    setActiveSlideIndex,
-    isDiff,
-    setIsDiff,
-  } = useMdData()
+  const { mdData, updateMdBody, setActiveSlideIndex, isDiff } = useMdData()
   const mdeRef = useRef<{ getMdeInstance: () => EasyMDE } | null>(null)
 
   useMde(mdData.body, mdeRef, setActiveSlideIndex)
-
-  // 初期化・スライド切替時の副作用
-  useInitMarkdownEffect(
-    initialSlide,
-    initialMarketingBody,
-    updateMdBody,
-    updateMdData,
-  )
-
-  useDiffMarkdownEffect(mdData, initialMarketingBody, setIsDiff)
+  useInitialDataSync(initialSlide)
+  const { markAsSaved } = useUnsavedChanges()
 
   const options: SimpleMDEReactProps['options'] = useMemo(
     () => ({
@@ -115,7 +97,7 @@ export default function EditMarkdown({
           action={async () => {
             try {
               await updateSlide(mdData.id, mdData.body, session)
-              setIsDiff(false)
+              markAsSaved()
               toastSuccess('保存しました')
             } catch (e) {
               toastError(
