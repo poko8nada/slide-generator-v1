@@ -12,7 +12,7 @@ export default function CustomSlideItem({
   if (!slide) return null
 
   const { updateMdData, isDiff } = useMdData()
-  const { id, title, body, createdAt, updatedAt } = slide
+  const { id, title, updatedAt } = slide
 
   return (
     <li
@@ -54,8 +54,6 @@ export default function CustomSlideItem({
           {updatedAt ? new Date(updatedAt).toLocaleString() : '-'}
         </p>
       </Label>
-
-      {/* <div className='sr-only'>{body}</div> */}
     </li>
   )
 }
