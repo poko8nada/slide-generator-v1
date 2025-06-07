@@ -3,8 +3,7 @@ import type { Slide } from '@/lib/slide-crud'
 
 export default function DisplaySlideItemOnSheet({
   slides,
-  isLoggedIn,
-}: { slides: Slide[]; isLoggedIn: boolean }) {
+}: { slides: Slide[] }) {
   return (
     <div className='mt-4'>
       <div className='grid grid-cols-2 gap-x-4 px-4 py-2 font-semibold text-sm text-gray-500 border-b'>
@@ -17,7 +16,6 @@ export default function DisplaySlideItemOnSheet({
             key={slide.id}
             slide={slide}
             defaultChecked={index === 0}
-            isLoggedIn={isLoggedIn}
           />
         ))}
       </div>

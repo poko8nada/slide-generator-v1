@@ -2,10 +2,7 @@ import { SignOutBtn } from '@/components/ui/auth-btn'
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetFooter,
-  SheetHeader,
-  SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { handleSignOut } from '@/lib/handle-auth'
@@ -24,10 +21,6 @@ export default function DisplaySheet({
         <Menu />
       </SheetTrigger>
       <SheetContent side='left'>
-        <SheetHeader>
-          <SheetTitle>スライド一覧</SheetTitle>
-          <SheetDescription>Markdownスライドを一覧表示します</SheetDescription>
-        </SheetHeader>
         {children}
         <SheetFooter>
           <Form action={handleSignOut} className='w-full text-right'>
