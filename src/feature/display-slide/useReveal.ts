@@ -134,8 +134,8 @@ export function useRevealInit(
   // refはuseEffectの依存配列に含めなくてよい
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    // initMdDataが空でない場合のみ初期化
-    if (!initMdData) {
+    // initMdDataがnullなら何もしない
+    if (initMdData === undefined || initMdData === null) {
       return
     }
     // すでに初期化済みなら再初期化しない
