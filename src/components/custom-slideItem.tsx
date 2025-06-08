@@ -4,13 +4,10 @@ import type { Slide } from '@/lib/slide-crud'
 import { useMdData } from '@/providers/md-data-provider'
 import { confirmUnsaved } from '@/lib/unsaved-warning'
 
-export default function CustomSlideItem({
-  slide,
-  defaultChecked,
-}: { slide: Slide; defaultChecked: boolean }) {
+export default function CustomSlideItem({ slide }: { slide: Slide }) {
   if (!slide) return null
 
-  const { updateMdData, isDiff } = useMdData()
+  const { updateMdData, isDiff, mdData } = useMdData()
   const { id, title, updatedAt } = slide
 
   return (
@@ -36,7 +33,7 @@ export default function CustomSlideItem({
           id={id}
           name='allSlide'
           className='sr-only'
-          defaultChecked={defaultChecked}
+          defaultChecked={mdData.id === id}
         />
         <p>{title ?? '無題'}</p>
         <p className='text-right text-sm text-muted-foreground'>

@@ -12,11 +12,7 @@ export default function DisplaySlideItemOnSheet({
       </div>
       <div>
         {slides.map((slide, index) => (
-          <CustomSlideItem
-            key={slide.id}
-            slide={slide}
-            defaultChecked={index === 0}
-          />
+          <CustomSlideItem key={slide.id} slide={slide} />
         ))}
       </div>
     </div>

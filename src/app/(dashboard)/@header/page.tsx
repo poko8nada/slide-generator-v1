@@ -5,7 +5,7 @@ import ControlUserAction from '@/feature/control-user-action'
 import DisplaySheet from '@/feature/display-sheet'
 import DisplaySlideItemOnSheet from '@/feature/display-slideItem-onSheet'
 import { type Slide, getSlides } from '@/lib/slide-crud'
-import { SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import {} from '@/components/ui/sheet'
 
 export default async function Page() {
   const session = await auth()
@@ -16,10 +16,7 @@ export default async function Page() {
       <GeneralHeader>
         <div className='flex items-center gap-2'>
           {session && (
-            <DisplaySheet>
-              <SheetHeader>
-                <SheetTitle className='sr-only'>スライド一覧</SheetTitle>
-              </SheetHeader>
+            <DisplaySheet session={session}>
               <DisplaySlideItemOnSheet slides={slides} />
             </DisplaySheet>
           )}

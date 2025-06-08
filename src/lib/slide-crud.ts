@@ -19,7 +19,7 @@ export const getSlides = unstable_cache(
         .from(slides)
         .where(eq(slides.userId, session.user.id))
         .orderBy(desc(slides.updatedAt))
-      console.log('[getSlides] db result:', result)
+      // console.log('[getSlides] db result:', result)
       return result
     } catch (e) {
       console.log('[getSlides] error:', e)
@@ -84,19 +84,29 @@ export async function updateSlide(
   }
 }
 
-export async function createSlide(userId: string, title = 'New slide') {
+export async function createSlide(
+  session: Session | null,
+  title = 'New slide',
+) {
+  if (!session?.user?.id) {
+    console.log('[createSlide] session.user.id is missing')
+    return []
+  }
   try {
-    // const newSlide = await db
+    console.log(
+      '[createSlide] Creating slide for user:',
+      session.user.id,
+      'with title:',
+      title,
+    )
     await db.insert(slides).values({
-      userId,
+      userId: session.user.id,
       title,
       body: '',
       createdAt: new Date(),
       updatedAt: new Date(),
     })
-    // .returning()
-    revalidateTag('slides')
-    // return newSlide[0]
+    console.log('[createSlide] Slide created successfully')
   } catch (e) {
     console.log('[createSlide] error:', e)
     throw e instanceof Error ? e : new Error('スライド作成に失敗しました')
