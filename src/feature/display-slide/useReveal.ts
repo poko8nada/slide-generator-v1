@@ -131,11 +131,16 @@ export function useRevealInit(
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
   styleRef: RefObject<HTMLStyleElement | null>,
 ) {
+  // 初期化時にmdDataが''だった場合、初期化されないため空文字を入れる
+  let formattedInitMdData = initMdData
+  if (formattedInitMdData === '') {
+    formattedInitMdData = ' '
+  }
   // refはuseEffectの依存配列に含めなくてよい
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     // initMdDataがnullなら何もしない
-    if (initMdData === undefined || initMdData === null || initMdData === '') {
+    if (!formattedInitMdData) {
       return
     }
     // すでに初期化済みなら再初期化しない
@@ -160,7 +165,7 @@ export function useRevealInit(
           scrollActivationWidth: 0,
         })
 
-        const slides = await getSlides(initMdData)
+        const slides = await getSlides(formattedInitMdData)
         setSlides(slides, slidesRef, revealRef, 0)
 
         await revealRef.current.initialize()
@@ -177,7 +182,7 @@ export function useRevealInit(
 
     init()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initMdData])
+  }, [formattedInitMdData])
 
   // refはuseEffectの依存配列に含めなくてよい
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
