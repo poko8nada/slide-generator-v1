@@ -21,7 +21,8 @@ export function useCustomSnap(
   setSlideSnap: React.Dispatch<HTMLElement[] | null>,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
-  const [snapMdData, setSnapMdData] = useState('')
+  // 新しいスライドは''であるため、半スペを加えて比較することで、スライドを検出する
+  const [snapMdData, setSnapMdData] = useState(`${mdData} `)
 
   // refはuseEffectの依存配列に含めなくてよい
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>

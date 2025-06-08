@@ -44,7 +44,7 @@ export function useUnsavedChanges() {
       return
     }
     const timer = setTimeout(() => {
-      if (mdData.body !== prevData.body && prevData.body !== '') {
+      if (mdData.body !== prevData.body) {
         setIsDiff(true)
         return
       }
@@ -58,6 +58,7 @@ export function useUnsavedChanges() {
 
   // 保存完了時に呼び出すメソッド
   const markAsSaved = () => {
+    console.log('[useUnsavedChanges] 保存完了: markAsSaved呼び出し')
     setPrevData({
       id: mdData.id,
       body: mdData.body,
