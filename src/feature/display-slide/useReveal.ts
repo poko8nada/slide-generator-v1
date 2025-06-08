@@ -135,7 +135,7 @@ export function useRevealInit(
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     // initMdDataがnullなら何もしない
-    if (initMdData === undefined || initMdData === null) {
+    if (initMdData === undefined || initMdData === null || initMdData === '') {
       return
     }
     // すでに初期化済みなら再初期化しない
