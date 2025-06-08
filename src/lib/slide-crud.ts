@@ -32,6 +32,36 @@ export const getSlides = unstable_cache(
   },
 )
 
+function createTitleByBody(body: string): string {
+  const trimmedBody = body.trim()
+  if (!trimmedBody) return 'Untitled'
+
+  const firstSlide = trimmedBody.split(/(?<=\n|^)---(?=\n|$)/)[0]
+  // Markdown記法の記号を取り除く
+  const cleanText = firstSlide
+    .replace(/^#+\s*/, '') // Remove headings
+    .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
+    .replace(/\*(.*?)\*/g, '$1') // Remove italic
+    .replace(/__(.*?)__/g, '$1') // Remove bold (underscore)
+    .replace(/_(.*?)_/g, '$1') // Remove italic (underscore)
+    .replace(/`(.*?)`/g, '$1') // Remove inline code
+    .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Remove links [text](url)
+    .replace(/!\[(.*?)\]\(.*?\)/g, '$1') // Remove images ![alt](url)
+    .replace(/~~(.*?)~~/g, '$1') // Remove strikethrough
+    .replace(/^\s*[-*+]\s+/gm, '') // Remove unordered list markers (-, *, +)
+    .replace(/^\s*\d+\.\s+/gm, '') // Remove ordered list markers (1. 2. 3.)
+    .replace(/^\s*>\s?/gm, '') // Remove blockquotes
+    .replace(/^\s*\|.*\|\s*$/gm, '') // Remove table pipes and headers
+    .replace(/^\s*\|?[-: ]+\|?\s*$/gm, '') // Remove table separator lines (|---|)
+    .replace(/<[^>]+>/g, '') // Remove HTML tags (for images, links, etc.)
+    .replace(/\s+/g, ' ') // Collapse multiple spaces/newlines
+    .trim()
+
+  return cleanText.length > 30
+    ? `${cleanText.slice(0, 30)}...`
+    : cleanText || 'Untitled'
+}
+
 export async function updateSlide(
   id: string,
   body: string,
@@ -42,13 +72,33 @@ export async function updateSlide(
     throw new Error('ユーザー情報がありません（未ログイン）')
   }
   try {
+    const title = createTitleByBody(body)
     await db
       .update(slides)
-      .set({ body, updatedAt: new Date() })
+      .set({ title, body, updatedAt: new Date() })
       .where(eq(slides.id, String(id)))
     revalidateTag('slides')
   } catch (e) {
     console.log('[updateSlide] error:', e)
     throw e instanceof Error ? e : new Error('スライド保存に失敗しました')
+  }
+}
+
+export async function createSlide(userId: string, title = 'New slide') {
+  try {
+    // const newSlide = await db
+    await db.insert(slides).values({
+      userId,
+      title,
+      body: '',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+    // .returning()
+    revalidateTag('slides')
+    // return newSlide[0]
+  } catch (e) {
+    console.log('[createSlide] error:', e)
+    throw e instanceof Error ? e : new Error('スライド作成に失敗しました')
   }
 }
