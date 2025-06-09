@@ -112,3 +112,26 @@ export async function createSlide(
     throw e instanceof Error ? e : new Error('スライド作成に失敗しました')
   }
 }
+/**
+ * スライド削除（認証・権限チェック、削除後revalidateTag）
+ */
+import { and } from 'drizzle-orm'
+export async function deleteSlide(id: string, session: Session | null) {
+  if (!session?.user?.id) {
+    console.log('[deleteSlide] session.user.id is missing')
+    throw new Error('ユーザー情報がありません（未ログイン）')
+  }
+  try {
+    // 権限チェック: 自分のスライドのみ削除可
+    const result = await db
+      .delete(slides)
+      .where(and(eq(slides.id, String(id)), eq(slides.userId, session.user.id)))
+    if (!result) {
+      throw new Error('スライドが見つからないか、権限がありません')
+    }
+    revalidateTag('slides')
+  } catch (e) {
+    console.log('[deleteSlide] error:', e)
+    throw e instanceof Error ? e : new Error('スライド削除に失敗しました')
+  }
+}
