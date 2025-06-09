@@ -5,13 +5,17 @@
 		"ignoreUnknown": true
 	},
 	"organizeImports": {
-		"enabled": true
+		"enabled": false,
+		"ignore": [
+			"node_modules"
+		]
 	},
 	"linter": {
 		"ignore": [
 			".next",
 			"node_modules",
-			".json"
+			".json",
+			"src/components/ui/*.tsx"
 		],
 		"rules": {
 			"recommended": true,
@@ -19,7 +23,7 @@
 				"useSortedClasses": "off"
 			},
 			"correctness": {
-				"noUnusedImports": "warn",
+				"noUnusedImports": "error",
 				"noUnusedVariables": "warn"
 			}
 		}
@@ -30,7 +34,8 @@
 		"ignore": [
 			".next",
 			"node_modules",
-			".json"
+			".json",
+			"src/components/ui/*.tsx"
 		],
 		"indentWidth": 2,
 		"indentStyle": "space",
