@@ -15,19 +15,17 @@ import CustomSubmitButton from '@/components/custom-submit-button'
 import Form from 'next/form'
 
 export default function EditMarkdown({
-  initialSlide,
-  slideIds,
+  allSlide,
   session,
 }: {
-  initialSlide: Slide | null
-  slideIds: string[]
+  allSlide: Slide[]
   session: Session | null
 }) {
   const { mdData, updateMdBody, isDiff } = useMdData()
   const mdeRef = useRef<{ getMdeInstance: () => EasyMDE } | null>(null)
 
   useMde(mdeRef)
-  useInitialDataSync(slideIds, initialSlide)
+  const initialSlide = useInitialDataSync(allSlide)
   const { markAsSaved } = useUnsavedChanges()
 
   return (

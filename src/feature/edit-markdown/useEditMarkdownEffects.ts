@@ -4,21 +4,28 @@ import { useMdData } from '@/providers/md-data-provider'
 import { initialMarketingBody } from '@/lib/relative-md-data-pvd'
 
 // 初期化・スライド切替時の状態同期
-export function useInitialDataSync(
-  slideIds: string[],
-  initialSlide: Slide | null,
-) {
-  const { updateMdBody, updateMdData, setSlideIds } = useMdData()
+export function useInitialDataSync(allSlide: Slide[]) {
+  const { updateMdBody, updateMdData, mdData } = useMdData()
+
+  const initialSlide =
+    (allSlide[0]?.title === 'New slide' &&
+      allSlide[0]?.body === '' &&
+      allSlide[0]) ||
+    allSlide.find(s => s.id === mdData.id) ||
+    allSlide[0] ||
+    null
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    setSlideIds(slideIds)
     if (!initialSlide) {
       updateMdBody(initialMarketingBody)
     }
     if (initialSlide) {
       updateMdData(initialSlide)
     }
-  }, [initialSlide, initialMarketingBody])
+  }, [initialSlide])
+
+  return initialSlide
 }
 
 // 未保存の変更があるかどうかを管理、保存完了時の関数を提供
