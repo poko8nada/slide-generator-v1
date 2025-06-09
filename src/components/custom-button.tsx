@@ -35,7 +35,7 @@ export default function CustomButton({
       disabled={isLoading || disabled}
       variant={variant}
       type={type}
-      className={cn(className, 'cursor-pointer')}
+      className={cn(className, 'cursor-pointer select-none')}
     >
       {isLoading ? <LoaderCircle className='animate-spin' /> : icon}
       {children}

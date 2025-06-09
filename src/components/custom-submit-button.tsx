@@ -34,7 +34,7 @@ export default function CustomSubmitButton({
       disabled={pending || disabled}
       variant={variant}
       type={'submit'}
-      className={cn(className, 'cursor-pointer')}
+      className={cn(className, 'cursor-pointer select-none')}
     >
       {pending ? <LoaderCircle className='animate-spin' /> : icon}
       {children}

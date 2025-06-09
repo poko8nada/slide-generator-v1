@@ -9,6 +9,7 @@ import { toastSuccess, toastError } from '@/components/custom-toast'
 import { CustomPopover } from '@/components/custom-popover'
 import { useMdData } from '@/providers/md-data-provider'
 import { cn } from '@/lib/utils'
+import { Trash2 } from 'lucide-react'
 
 export default function DisplaySlideItemOnSheet({
   slides,
@@ -57,7 +58,11 @@ export default function DisplaySlideItemOnSheet({
                     }
                   }}
                 >
-                  <CustomSubmitButton variant={'destructive'} className=''>
+                  <CustomSubmitButton
+                    variant={'destructive'}
+                    className=''
+                    icon={<Trash2 />}
+                  >
                     delete
                   </CustomSubmitButton>
                 </Form>
