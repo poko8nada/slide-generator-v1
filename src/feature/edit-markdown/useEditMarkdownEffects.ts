@@ -5,12 +5,12 @@ import { initialMarketingBody } from '@/lib/relative-md-data-pvd'
 
 // 初期化・スライド切替時の状態同期
 export function useInitialDataSync(allSlide: Slide[]) {
-  const { updateMdBody, updateMdData, mdData } = useMdData()
+  const { updateMdBody, updateMdData, mdData, isNew } = useMdData()
+
+  console.log('isNew', isNew)
 
   const initialSlide =
-    (allSlide[0]?.title === 'New slide' &&
-      allSlide[0]?.body === '' &&
-      allSlide[0]) ||
+    (isNew && allSlide[0]) ||
     allSlide.find(s => s.id === mdData.id) ||
     allSlide[0] ||
     null

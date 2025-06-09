@@ -33,10 +33,8 @@ const MdDataContext = createContext<
       setActiveSlideIndex: React.Dispatch<React.SetStateAction<number>>
       isDiff: boolean
       setIsDiff: React.Dispatch<React.SetStateAction<boolean>>
-      slideIds: string[]
-      setSlideIds: React.Dispatch<React.SetStateAction<string[]>>
-      slideIndex: number
-      setSlideIndex: React.Dispatch<React.SetStateAction<number>>
+      isNew: boolean
+      setIsNew: React.Dispatch<React.SetStateAction<boolean>>
     }
   | undefined
 >(undefined)
@@ -52,8 +50,7 @@ export const MdDataProvider = ({
   const [mdData, setMdData] = useState<Slide>(initialMdData)
   const [activeSlideIndex, setActiveSlideIndex] = useState(0)
   const [isDiff, setIsDiff] = useState(false)
-  const [slideIds, setSlideIds] = useState<string[]>([])
-  const [slideIndex, setSlideIndex] = useState(0)
+  const [isNew, setIsNew] = useState(false)
 
   useUnsavedBeforeUnload(isDiff, isLoggedIn)
   useUnsavedRouteChange(isDiff, isLoggedIn)
@@ -75,10 +72,8 @@ export const MdDataProvider = ({
         setActiveSlideIndex,
         isDiff,
         setIsDiff,
-        slideIds,
-        setSlideIds,
-        slideIndex,
-        setSlideIndex,
+        isNew,
+        setIsNew,
       }}
     >
       {children}

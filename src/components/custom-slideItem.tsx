@@ -11,12 +11,13 @@ export default function CustomSlideItem({
 }) {
   if (!slide) return null
 
-  const { updateMdData, isDiff, mdData } = useMdData()
+  const { updateMdData, isDiff, mdData, setIsNew } = useMdData()
   const { id, title, updatedAt } = slide
 
   const handleSlideSelect = () => {
     if (!confirmUnsaved(isDiff)) return
     updateMdData(slide)
+    setIsNew(false)
   }
 
   return (
@@ -26,6 +27,7 @@ export default function CustomSlideItem({
       onKeyDown={e => {
         if ((e.key === 'Enter' || e.key === ' ') && confirmUnsaved(isDiff)) {
           updateMdData(slide)
+          setIsNew(false)
         }
       }}
     >

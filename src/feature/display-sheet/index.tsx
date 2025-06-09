@@ -16,14 +16,14 @@ import { FilePlus } from 'lucide-react'
 import type { Session } from 'next-auth'
 import { useState } from 'react'
 import handleCreateNewSlide from './handle-create-newSlide'
+import { useMdData } from '@/providers/md-data-provider'
 
 export default function DisplaySheet({
   session,
   children,
 }: { session: Session; children?: React.ReactNode }) {
   const [open, setOpen] = useState(false)
-
-  console.log(open)
+  const { setIsNew } = useMdData()
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -39,6 +39,7 @@ export default function DisplaySheet({
           <Form
             action={() => {
               handleCreateNewSlide(session)
+              setIsNew(true)
               setOpen(false)
             }}
           >
