@@ -1,12 +1,17 @@
 import type { Slide } from '@/lib/slide-crud'
 import { useEffect, useState } from 'react'
-import { initialMarketingBody, useMdData } from '@/providers/md-data-provider'
+import { useMdData } from '@/providers/md-data-provider'
+import { initialMarketingBody } from '@/lib/relative-md-data-pvd'
 
 // 初期化・スライド切替時の状態同期
-export function useInitialDataSync(initialSlide: Slide | null) {
-  const { updateMdBody, updateMdData } = useMdData()
+export function useInitialDataSync(
+  slideIds: string[],
+  initialSlide: Slide | null,
+) {
+  const { updateMdBody, updateMdData, setSlideIds } = useMdData()
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
+    setSlideIds(slideIds)
     if (!initialSlide) {
       updateMdBody(initialMarketingBody)
     }

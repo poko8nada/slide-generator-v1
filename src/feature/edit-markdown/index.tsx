@@ -16,16 +16,18 @@ import Form from 'next/form'
 
 export default function EditMarkdown({
   initialSlide,
+  slideIds,
   session,
 }: {
   initialSlide: Slide | null
+  slideIds: string[]
   session: Session | null
 }) {
   const { mdData, updateMdBody, isDiff } = useMdData()
   const mdeRef = useRef<{ getMdeInstance: () => EasyMDE } | null>(null)
 
   useMde(mdeRef)
-  useInitialDataSync(initialSlide)
+  useInitialDataSync(slideIds, initialSlide)
   const { markAsSaved } = useUnsavedChanges()
 
   return (

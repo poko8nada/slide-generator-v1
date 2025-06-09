@@ -1,3 +1,4 @@
+'use client'
 // 保存警告アラート共通ロジック
 import { useEffect } from 'react'
 
