@@ -17,7 +17,7 @@ export default async function Page() {
         <div className='flex items-center gap-2'>
           {session && (
             <DisplaySheet session={session}>
-              <DisplaySlideItemOnSheet slides={slides} />
+              <DisplaySlideItemOnSheet slides={slides} session={session} />
             </DisplaySheet>
           )}
           <HeaderLogo />
